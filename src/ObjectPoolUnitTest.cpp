@@ -1,198 +1,245 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
+#include <new>
 
 #include "ArrayUtils.h"
-#include "ObjectPoolScopedAllocator.h"
+#include "ObjectPool.h"
 
 // This is a unit test of the various object pool classes.
 namespace
-{
+{   
+    // TestObject instances will be allocated by our object pool allocators.
+    // These are simple wrappers around string pointers. We'll test to make sure
+    // the string pointers are the same after subsequent allocations to the same
+    // pool.
     class TestObject
     {
-    public:
-        TestObject() {}
+    public:       
+        TestObject( const char* p = NULL ) : m_pContents(p) {}
+        const char* GetContents() const { return m_pContents; }
 
-        TestObject( const char* pString )
+    private:
+        const char* m_pContents;
+    };
+
+    // TestState instances wrap around allocated TestObject instances. They take
+    // a newly-allocated TestObject and memoize its contents. After the
+    // allocator state changes, use IsValid() to ensure that allocated object
+    // state has not been clobbered.
+    class TestState
+    {
+    public:
+        TestState() : m_pContentsCopy(NULL), m_pObject(NULL) {}
+
+        void SetObject( TestObject* pObject = NULL )
         {
-            m_pString = pString;
-            printf( "%s constructed!\n", m_pString );
+            m_pObject = pObject;
+            m_pContentsCopy = m_pObject ? m_pObject->GetContents() : NULL;
         }
 
-        ~TestObject()
+        TestObject* GetObject() const { return m_pObject; }
+
+        bool IsValid() const
         {
-            printf( "%s Freeed!\n", m_pString );
+            return m_pObject == NULL || m_pObject->GetContents() == m_pContentsCopy;
+        }        
+        
+        template <size_t _ArraySize>
+        static bool IsValidArray( const TestState(&pArray)[_ArraySize] )
+        {
+            for ( unsigned i = 0; i < _ArraySize; ++i )
+            {
+                if ( ! pArray[i].IsValid() )
+                {
+                    return false;
+                }
+            }
+            
+            return true;
         }
 
     private:
-        const char* m_pString;
-    };
-
-    struct TestItem
-    {
-        const char* pText;
-        TestObject* pObject;
-    };
-
-    TestItem g_ppTests[] = {
-        { "First", NULL },
-        { "Second", NULL },
-        { "Third", NULL },
-        { "Fourth", NULL },
-        { "Fifth", NULL },
-        { "Sixth", NULL },
-    };
-
-    const char* g_ppReplacements[] =
-    {
-        "Replacement 1",
-        "Replacement 2",
-        "Replacement 3",
-        "Replacement 4",
-        "Replacement 5",
-        "Replacement 6",
+        const char* m_pContentsCopy;
+        TestObject* m_pObject;
     };
 
     // Allocator for PreallocatedObjectPool
-    template<unsigned _Stride, unsigned _ObjectCount, bool _ManageBuffer>
+    template<unsigned _Stride, unsigned _Capacity>
     class PreallocatedPoolFactory
     {
     public:
-        static ScopedAllocator* Create()
+        enum
         {
-            void* pBuffer = new unsigned char[ _Stride * _ObjectCount ];
-            PreallocatedObjectPoolAllocator* pAllocator = new PreallocatedObjectPoolAllocator();
-            pAllocator->Init( pBuffer, _ObjectCount, _Stride, _ManageBuffer );
-            return pAllocator;
+            eStride = _Stride,
+            eCapacity = _Capacity
+        };
+        
+        typedef PreallocatedObjectPool InternalObjectPool;
+        
+        static InternalObjectPool* Create()
+        {
+            void* pBuffer = new unsigned char[ _Stride * _Capacity ];
+            InternalObjectPool* pPool = new InternalObjectPool();
+            pPool->Init( pBuffer, _Capacity, _Stride, true );
+            return pPool;
         }
     };
 
-    // Allocator for FixedObjectPool
-    template<unsigned _Stride, unsigned _ObjectCount>
-    class FixedPoolFactory
+    // Allocator for StaticObjectPool
+    template<unsigned _Stride, unsigned _Capacity>
+    class StaticPoolFactory
     {
     public:
-        static ScopedAllocator* Create()
+        enum
         {
-            return new FixedObjectPoolAllocator<_Stride, _ObjectCount>();
+            eStride = _Stride,
+            eCapacity = _Capacity
+        };        
+        
+        typedef StaticObjectPool<_Stride, _Capacity> InternalObjectPool;
+        
+        static InternalObjectPool* Create()
+        {
+            return new InternalObjectPool();
         }
     };
+    
+    const char* g_ppSampleContents[] = {
+        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n",
+        "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"
+    };
 
-    template<typename _TPoolFactory>
+    template<typename _TAllocatorFactory, unsigned _PoolSize>
     void PoolTest()
     {
-        ScopedAllocator* pAllocator;
+        typedef typename _TAllocatorFactory::InternalObjectPool PoolType;
+        PoolType* pPool;
+        TestState pTestState[_PoolSize];
 
-        // Test allocations only
-        printf( "\nCreating pool...\n");
-        pAllocator = _TPoolFactory::Create();
-
-        printf( "Allocating to pool...\n" );
-        for ( unsigned i = 0; i < ARRAY_SIZE(g_ppTests); ++i )
+        printf( "Creating pool...\n" );
+        pPool = _TAllocatorFactory::Create();
+        
+        for ( unsigned nTrialSize = 1; nTrialSize <= _PoolSize; ++nTrialSize )
         {
-            g_ppTests[i].pObject = new( pAllocator->Alloc(sizeof(TestObject)) ) TestObject( g_ppTests[i].pText );
-        }
+            printf( "Testing %u allocations on a pool with size %u\n", nTrialSize, _PoolSize );
 
-        printf( "Deleting pool...\n" );
-        delete pAllocator;
-
-        // Test allocations, plus deallocations
-        printf( "\nCreating pool...\n");
-        pAllocator = _TPoolFactory::Create();
-
-        printf( "Allocating to pool...\n" );
-        for ( unsigned i = 0; i < ARRAY_SIZE(g_ppTests); ++i )
-        {
-            g_ppTests[i].pObject = new( pAllocator->Alloc(sizeof(TestObject)) ) TestObject( g_ppTests[i].pText );
-        }
-
-        printf( "Deleting elements from pool...\n" );
-        for ( unsigned i = 0; i < ARRAY_SIZE(g_ppTests); ++i )
-        {
-            pAllocator->Free( g_ppTests[i].pObject );
-        }
-
-        printf( "Deleting pool...\n" );
-        delete pAllocator;
-
-        // Test allocations, plus random deallocation/reallocation
-        printf( "\nCreating pool...\n");
-        pAllocator = _TPoolFactory::Create();
-
-        printf( "Allocating to pool...\n" );
-        for ( unsigned i = 0; i < ARRAY_SIZE(g_ppTests); ++i )
-        {
-            g_ppTests[i].pObject = new( pAllocator->Alloc(sizeof(TestObject)) ) TestObject( g_ppTests[i].pText );
-        }
-
-        printf( "random element destruction/creation...\n");
-        for ( unsigned i = 0; i < ARRAY_SIZE(g_ppReplacements); ++i )
-        {
-            printf( "Deleting randomly and replacing...\n" );
-            unsigned n = rand() % ARRAY_SIZE(g_ppTests);
-            pAllocator->Free( g_ppTests[n].pObject );
-            g_ppTests[n].pObject = new( pAllocator->Alloc(sizeof(TestObject)) ) TestObject( g_ppReplacements[i] );
-        }
-
-        printf( "Deleting pool...\n" );
-        delete pAllocator;
-
-        // Test allocations, plus random deallocation/reallocation, plus deallocation
-        printf( "\nCreating pool...\n");
-        pAllocator = _TPoolFactory::Create();
-
-        printf( "Allocating to pool...\n" );
-        for ( unsigned i = 0; i < ARRAY_SIZE(g_ppTests); ++i )
-        {
-            g_ppTests[i].pObject = new( pAllocator->Alloc(sizeof(TestObject)) ) TestObject( g_ppTests[i].pText );
-        }
-
-        printf( "random element destruction/creation...\n");
-        for ( unsigned i = 0; i < ARRAY_SIZE(g_ppReplacements); ++i )
-        {
-            printf( "Deleting randomly and replacing...\n" );
-            unsigned n = rand() % ARRAY_SIZE(g_ppTests);
-            pAllocator->Free( g_ppTests[n].pObject );
-            g_ppTests[n].pObject = new( pAllocator->Alloc(sizeof(TestObject)) ) TestObject( g_ppReplacements[i] );
-        }
-
-        printf( "Deleting elements from pool...\n" );
-        for ( unsigned i = 0; i < ARRAY_SIZE(g_ppTests); ++i )
-        {
-            pAllocator->Free( g_ppTests[i].pObject );
-        }
-
-        printf( "Deleting pool...\n" );
-        delete pAllocator;
-
-        // Test random allocations
-        for ( unsigned i = 0; i < 10; ++i )
-        {
-            printf( "\nCreating pool...\n");
-            pAllocator = _TPoolFactory::Create();
-
-            const unsigned nTimes = ( rand() % ARRAY_SIZE(g_ppTests) ) + 1;
-            printf( "Allocating randomly to pool %d times...\n", nTimes );
-            for ( unsigned i = 0; i < nTimes; ++i )
+            // Ensure that the internal allocation count is zero
+            assert( 0 == pPool->CountAllocations() );
+            
+            // Ensure that the internal allocation count corresponds to the free list size
+            assert( pPool->CountAllocations() == pPool->GetCapacity() - ObjectPool::FreeListSize(pPool->GetFreeListHead()) );            
+            
+            // Ensure that allocations haven't been corrupted
+            assert( TestState::IsValidArray(pTestState) );
+            
+            // Initial allocations
+            for ( unsigned i = 0; i < nTrialSize; ++i )
             {
-                unsigned n = rand() % ARRAY_SIZE(g_ppTests);
-                g_ppTests[i].pObject = new( pAllocator->Alloc(sizeof(TestObject)) ) TestObject( g_ppTests[n].pText );
+                pTestState[i].SetObject(
+                    new( pPool->Alloc() ) TestObject( g_ppSampleContents[i] )
+                );
+                
+                // Ensure that internal allocation count is accurate
+                assert( i + 1 == pPool->CountAllocations() );
+                
+                // Ensure that free list size corresponds to current number of allocations
+                assert( pPool->CountAllocations() == pPool->GetCapacity() - ObjectPool::FreeListSize(pPool->GetFreeListHead()) );
+                       
+                // Ensure that allocations haven't been corrupted
+                assert( TestState::IsValidArray(pTestState) );
             }
+            
+            // Random replacements
+            const unsigned nReplacements = nTrialSize;
+            for ( unsigned i = 0; i < nReplacements; ++i )
+            {                 
+                const int nReplacementIndex = rand() % nTrialSize;
+                
+                // Free the object
+                pTestState[nReplacementIndex].GetObject()->~TestObject();
+                pPool->Free( static_cast<void*>(pTestState[nReplacementIndex].GetObject()) );
+                pTestState[nReplacementIndex].SetObject();
+                
+                // Validations
+                {
+                    // Ensure that the old internal allocation count corresponds to the current test size, minus one
+                    assert( nTrialSize - 1 == pPool->CountAllocations() );
+                    
+                    // Ensure that the free list size corresponds to the number of allocations
+                    assert( pPool->CountAllocations() == pPool->GetCapacity() - ObjectPool::FreeListSize(pPool->GetFreeListHead()) );
+                    
+                    // Ensure that allocations haven't been corrupted
+                    assert( TestState::IsValidArray(pTestState) );
+                }
+                
+                // Create a new object
+                const char* pReplacementValue = g_ppSampleContents[ rand() % JL_ARRAY_SIZE(g_ppSampleContents) ];
+                pTestState[nReplacementIndex].SetObject(
+                    new( pPool->Alloc() ) TestObject( pReplacementValue )
+                );
 
-            printf( "Deleting pool...\n" );
-            delete pAllocator;
-        }
+                // Validations
+                {
+                    // Ensure that the internal allocation count corresponds to the current test size
+                    assert( nTrialSize == pPool->CountAllocations() );
+                    
+                    // Ensure that the free list size corresponds to the number of allocations
+                    assert( pPool->CountAllocations() == pPool->GetCapacity() - ObjectPool::FreeListSize(pPool->GetFreeListHead()) );
+                    
+                    // Ensure that allocations haven't been corrupted
+                    assert( TestState::IsValidArray(pTestState) );               
+                }
+            }
+            
+            // Free all allocations
+            for ( unsigned i = 0; i < nTrialSize; ++i )
+            {
+                // Cache the old internal allocation count
+                const int nPreFreeAllocations = pPool->CountAllocations();
+                
+                // Free the object
+                pTestState[i].GetObject()->~TestObject();
+                pPool->Free( static_cast<void*>(pTestState[i].GetObject()) );
+                pTestState[i].SetObject();
+                
+                // Validations
+                {
+                    // Ensure that the old internal allocation count corresponds to the current allocation count
+                    assert( nPreFreeAllocations - 1 == pPool->CountAllocations() );
+                    
+                    // Ensure that the free list size corresponds to the number of allocations
+                    assert( pPool->CountAllocations() == pPool->GetCapacity() - ObjectPool::FreeListSize(pPool->GetFreeListHead()) );
+                    
+                    // Ensure that allocations haven't been corrupted                
+                    assert( TestState::IsValidArray(pTestState) );
+                }
+            }
+            
+            // Final validations
+            {
+                // Ensure that the internal allocation count is zero
+                assert( 0 == pPool->CountAllocations() );
+                
+                // Ensure that the internal allocation count corresponds to the free list size
+                assert( pPool->CountAllocations() == pPool->GetCapacity() - ObjectPool::FreeListSize(pPool->GetFreeListHead()) );
+                
+                // Ensure that allocations haven't been corrupted
+                assert( TestState::IsValidArray(pTestState) );            
+            }
+        } // Increment trial size
     }
 }
 
 void ObjectPoolUnitTest()
 {
-    enum { eTestObjectCount = ARRAY_SIZE(g_ppTests) };
+    enum { ePoolCapacity = 1000 };
+    
+    printf("Testing PreallocatedObjectPool...\n");
+    typedef PreallocatedPoolFactory<sizeof(TestObject), ePoolCapacity> PreallocatedPoolTestFactory;
+    PoolTest<PreallocatedPoolTestFactory, PreallocatedPoolTestFactory::eCapacity>();
 
-    typedef PreallocatedPoolFactory<sizeof(TestObject), eTestObjectCount, true> PreallocatedPoolFactory;
-    printf( "\n=== MANAGED PREALLOCATED POOL TestObjectS ===\n" );
-    PoolTest<PreallocatedPoolFactory>();
-
-    typedef FixedPoolFactory<sizeof(TestObject), eTestObjectCount> FixedPoolFactory;
-    printf( "\n=== MANAGED FIXED POOL TestObjectS ===\n" );
-    PoolTest<FixedPoolFactory>();
+    printf("\nTesting StaticObjectPool...\n");    
+    typedef StaticPoolFactory<sizeof(TestObject), ePoolCapacity> StaticPoolTestFactory;
+    PoolTest<StaticPoolTestFactory, StaticPoolTestFactory::eCapacity>();
 }

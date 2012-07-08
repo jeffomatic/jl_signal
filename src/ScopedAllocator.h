@@ -1,8 +1,11 @@
 #pragma once
-#ifndef SCOPED_ALLOCATOR_H_
-#define SCOPED_ALLOCATOR_H_
+#ifndef _JL_SCOPED_ALLOCATOR_H_
+#define _JL_SCOPED_ALLOCATOR_H_
 
-#include <new> // Allow for placement new
+// Scoped allocators will most likely be used with placement new, e.g.:
+//   Foo* pFoo = new( pFooAllocator->Alloc(sizeof(Foo)) ) Foo();
+// To use placement new, we need to include the standard 'new' header.
+#include <new>
 
 /**
  * An interface for very basic, stateful allocators. No array allocation.
@@ -15,4 +18,4 @@ public:
     virtual void Free( void* pObject ) = 0;
 };
 
-#endif // ! defined( SCOPED_ALLOCATOR_H_ )
+#endif // _JL_SCOPED_ALLOCATOR_H_

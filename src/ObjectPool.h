@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OBJECTPOOL_H_
-#define OBJECTPOOL_H_
+#ifndef _JL_OBJECTPOOL_H_
+#define _JL_OBJECTPOOL_H_
 
 #include <assert.h>
 
@@ -9,10 +9,8 @@
 /**
  * A family of object pool classes:
  *
- *    GenericPreallocatedObjectPool
- *    PreallocatedObjectPool (type-specific)
- *    GenericFixedObjectPool
- *    FixedObjectPool (type-specific)
+ *    PreallocatedObjectPool
+ *    StaticObjectPool
  *
  * For alignment issues related to the fixed object pools, this does not derive from
  * the ScopedAllocator interface. If you need an object pool to act as a ScopedAllocator,
@@ -20,7 +18,7 @@
  *
  * Example:
  *    // Create a pool of 100 physics components
- *    FixedObjectPool<PhysicsComponent, 100> oPhysicsComponentPool;
+ *    StaticObjectPool<PhysicsComponent, 100> oPhysicsComponentPool;
  *
  *    // Allocate a physics component from the pool
  *    PhysicsComponent* pPhysics = new( oPhysicsComponentPool.Alloc() ) PhysicsComponent( pOwner );
@@ -73,18 +71,12 @@ namespace ObjectPool
     }
 
     // Initializes an object buffer as a free list and returns the head of the list
-    FreeNode* InitFreeList( unsigned char* pObjectBuffer, unsigned nObjectCount, unsigned nStride );
+    FreeNode* InitFreeList( unsigned char* pObjectBuffer, unsigned nCapacity, unsigned nStride );
+    unsigned FreeListSize( FreeNode* pFreeListHead );
 
     // Returns true if an object is allocated to the given object pool
-    bool IsBoundedAndAligned( const void* pObject, const unsigned char* pObjectBuffer, unsigned nObjectCount, unsigned nStride );
+    bool IsBoundedAndAligned( const void* pObject, const unsigned char* pObjectBuffer, unsigned nCapacity, unsigned nStride );
     bool IsFree( const void* pObject, const FreeNode* pFreeListHead );
-
-    // Call typed destructor on an object at a generic address
-    template<typename _T>
-    void CastAndDestroy( void* pObject )
-    {
-        reinterpret_cast<_T*>( pObject )->~_T();
-    }
 };
 
 /**
@@ -98,13 +90,13 @@ class PreallocatedObjectPool
 {
 public:
     PreallocatedObjectPool();
-    PreallocatedObjectPool( void* pBuffer, unsigned nObjectCount, unsigned nStride, bool bManageBuffer = true );
+    PreallocatedObjectPool( void* pBuffer, unsigned nCapacity, unsigned nStride, bool bManageBuffer = true );
 
     ~PreallocatedObjectPool();
 
     // Initialize object pool with preallocated buffer. If the _ManageBuffer template parameter is set,
     // you should allocate this buffer using an array-new.
-    void Init( void* pBuffer, unsigned nObjectCount, unsigned nStride, bool bManageBuffer = true );
+    void Init( void* pBuffer, unsigned nCapacity, unsigned nStride, bool bManageBuffer = true );
     void Deinit();
 
     // Allocates memory. Does not call constructor--you should do a placement new on the returned pointer.
@@ -125,7 +117,7 @@ public:
     void Free( void* pObject )
     {
         assert( m_pObjectBuffer );
-        assert( ObjectPool::IsBoundedAndAligned(pObject, m_pObjectBuffer, m_nObjectCount, m_nStride) );
+        assert( ObjectPool::IsBoundedAndAligned(pObject, m_pObjectBuffer, m_nCapacity, m_nStride) );
 #ifdef _OBJECT_POOL_ENABLE_FREELIST_CHECK
         assert( ! ObjectPool::IsFree(pObject, m_pFreeListHead) );
 #endif
@@ -138,12 +130,12 @@ public:
     unsigned char* GetObjectBuffer() { return m_pObjectBuffer; }
     const unsigned char* GetObjectBuffer() const { return m_pObjectBuffer; }
 
-    unsigned GetObjectCount() const { return m_nObjectCount; }
+    unsigned GetCapacity() const { return m_nCapacity; }
     unsigned GetStride() const { return m_nStride; }
     unsigned CountAllocations() const { return m_nAllocations; }
 
     bool IsEmpty() const { return m_nAllocations == 0; }
-    bool IsFull() const { return m_nAllocations == m_nObjectCount; }
+    bool IsFull() const { return m_nAllocations == m_nCapacity; }
 
     ObjectPool::FreeNode* GetFreeListHead() { return m_pFreeListHead; }
     const ObjectPool::FreeNode* GetFreeListHead() const { return m_pFreeListHead; }
@@ -153,13 +145,7 @@ private:
 
     unsigned char* m_pObjectBuffer;
     ObjectPool::FreeNode* m_pFreeListHead;
-
-    // The following are only necessary for:
-    // - assertions
-    // - Accessor queries, e.g., if you need to know the size of the pool in an external context)
-    // - Managing objects, e.g., destroying the buffer and/or allocated objects upon the destruction of the pool
-    // If we don't need any of those, we can safely remove these member variables;
-    unsigned m_nObjectCount;
+    unsigned m_nCapacity;
     unsigned m_nStride;
     unsigned m_nAllocations;
     bool m_bManageBuffer;
@@ -171,13 +157,13 @@ private:
  *
  * Due to alignment issues, this is not implemented in terms of PreallocatedObjectPool.
  */
-template<unsigned _ObjectStride, unsigned _ObjectCount>
-class FixedObjectPool
+template<unsigned _Stride, unsigned _Capacity>
+class StaticObjectPool
 {
 public:
-    FixedObjectPool()
+    StaticObjectPool()
     {
-        m_pFreeListHead = ObjectPool::InitFreeList( m_pObjectBuffer, _ObjectCount, _ObjectStride );
+        m_pFreeListHead = ObjectPool::InitFreeList( m_pObjectBuffer, _Capacity, _Stride );
         m_nAllocations = 0;
     }
 
@@ -197,7 +183,7 @@ public:
     // Free allocated memory, with error checking. Does NOT call destructor.
     void Free( void* pObject )
     {
-        assert( ObjectPool::IsBoundedAndAligned(pObject, m_pObjectBuffer, _ObjectCount, _ObjectStride) );
+        assert( ObjectPool::IsBoundedAndAligned(pObject, m_pObjectBuffer, _Capacity, _Stride) );
 #ifdef _OBJECT_POOL_ENABLE_FREELIST_CHECK
         assert( ! ObjectPool::IsFree(pObject, m_pFreeListHead) );
 #endif
@@ -210,20 +196,20 @@ public:
     unsigned char* GetObjectBuffer() { return m_pObjectBuffer; }
     const unsigned char* GetObjectBuffer() const { return m_pObjectBuffer; }
 
-    unsigned GetObjectCount() const { return _ObjectCount; }
+    unsigned GetCapacity() const { return _Capacity; }
     unsigned CountAllocations() const { return m_nAllocations; }
-    unsigned GetStride() const { return _ObjectStride; }
+    unsigned GetStride() const { return _Stride; }
 
     ObjectPool::FreeNode* GetFreeListHead() { return m_pFreeListHead; }
     const ObjectPool::FreeNode* GetFreeListHead() const { return m_pFreeListHead; }
 
     bool IsEmpty() const { return m_nAllocations == 0; }
-    bool IsFull() const { return m_nAllocations == _ObjectCount; }
+    bool IsFull() const { return m_nAllocations == _Capacity; }
 
 private:
-    unsigned char m_pObjectBuffer[ _ObjectCount * _ObjectStride ];
+    unsigned char m_pObjectBuffer[ _Capacity * _Stride ];
     ObjectPool::FreeNode* m_pFreeListHead;
     unsigned m_nAllocations;
 };
 
-#endif // OBJECTPOOL_H_
+#endif // _JL_OBJECTPOOL_H_

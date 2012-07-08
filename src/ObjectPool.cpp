@@ -1,14 +1,15 @@
 #include <stddef.h>
+#include <assert.h>
 
 #include "ObjectPool.h"
 
 // Some helper routines
 namespace
 {
-    bool IsBounded( const void* pObject, const unsigned char* pObjectBuffer, unsigned nObjectCount, unsigned nStride )
+    bool IsBounded( const void* pObject, const unsigned char* pObjectBuffer, unsigned nCapacity, unsigned nStride )
     {
         const unsigned char* const pFirst = pObjectBuffer;
-        const unsigned char* const pLast = pObjectBuffer + nStride * (nObjectCount - 1);
+        const unsigned char* const pLast = pObjectBuffer + nStride * (nCapacity - 1);
         return pFirst <= pObject && pObject <= pLast;
     }
 
@@ -53,10 +54,10 @@ namespace
 ///////////////////////////////////////////////////////////////////////////////
 
 // Initializes an object buffer as a free list and returns the head of the list
-ObjectPool::FreeNode* ObjectPool::InitFreeList( unsigned char* pObjectBuffer, unsigned nObjectCount, unsigned nStride )
+ObjectPool::FreeNode* ObjectPool::InitFreeList( unsigned char* pObjectBuffer, unsigned nCapacity, unsigned nStride )
 {
     // Setup free list links
-    unsigned char* const pLast = pObjectBuffer + nStride * (nObjectCount - 1);
+    unsigned char* const pLast = pObjectBuffer + nStride * (nCapacity - 1);
 
     for ( unsigned char* pCurrent = pObjectBuffer; pCurrent < pLast; pCurrent += nStride )
     {
@@ -70,9 +71,23 @@ ObjectPool::FreeNode* ObjectPool::InitFreeList( unsigned char* pObjectBuffer, un
     return FreeNode::Cast( pObjectBuffer );
 }
 
-bool ObjectPool::IsBoundedAndAligned( const void* pObject, const unsigned char* pObjectBuffer, unsigned nObjectCount, unsigned nStride )
+unsigned ObjectPool::FreeListSize( ObjectPool::FreeNode* pFreeListHead )
 {
-    return IsBounded( pObject, pObjectBuffer, nObjectCount, nStride )
+    // Early out for degenerate case
+    if ( ! pFreeListHead ) return 0;
+    
+    unsigned n = 0;
+    for ( ; pFreeListHead; pFreeListHead = pFreeListHead->pNextFree )
+    {
+        ++n;
+    }
+    
+    return n;
+}
+
+bool ObjectPool::IsBoundedAndAligned( const void* pObject, const unsigned char* pObjectBuffer, unsigned nCapacity, unsigned nStride )
+{
+    return IsBounded( pObject, pObjectBuffer, nCapacity, nStride )
         && IsAligned( pObject, pObjectBuffer, nStride );
 }
 
@@ -98,10 +113,10 @@ PreallocatedObjectPool::PreallocatedObjectPool()
     Reset();
 }
 
-PreallocatedObjectPool::PreallocatedObjectPool( void* pBuffer, unsigned nObjectCount, unsigned nStride, bool bManageBuffer /*= true */ )
+PreallocatedObjectPool::PreallocatedObjectPool( void* pBuffer, unsigned nCapacity, unsigned nStride, bool bManageBuffer /*= true */ )
 {
     m_pObjectBuffer = NULL; // prevent assert in Init()
-    Init( pBuffer, nObjectCount, nStride, bManageBuffer );
+    Init( pBuffer, nCapacity, nStride, bManageBuffer );
 }
 
 PreallocatedObjectPool::~PreallocatedObjectPool()
@@ -112,14 +127,14 @@ PreallocatedObjectPool::~PreallocatedObjectPool()
     }
 }
 
-void PreallocatedObjectPool::Init( void* pBuffer, unsigned nObjectCount, unsigned nStride, bool bManageBuffer /*= true */ )
+void PreallocatedObjectPool::Init( void* pBuffer, unsigned nCapacity, unsigned nStride, bool bManageBuffer /*= true */ )
 {
     assert( m_pObjectBuffer == NULL );
 
     m_pObjectBuffer = (unsigned char*)pBuffer;
-    m_pFreeListHead = ObjectPool::InitFreeList( m_pObjectBuffer, nObjectCount, nStride );
+    m_pFreeListHead = ObjectPool::InitFreeList( m_pObjectBuffer, nCapacity, nStride );
 
-    m_nObjectCount = nObjectCount;
+    m_nCapacity = nCapacity;
     m_nStride = nStride;
     m_bManageBuffer = bManageBuffer;
 }
@@ -139,7 +154,7 @@ void PreallocatedObjectPool::Reset()
     m_pObjectBuffer = NULL;
     m_pFreeListHead = NULL;
 
-    m_nObjectCount = 0;
+    m_nCapacity = 0;
     m_nAllocations = 0;
     m_nStride = 0;
     m_bManageBuffer = false;
