@@ -3,8 +3,10 @@
 #include <assert.h>
 #include <new>
 
-#include "ArrayUtils.h"
+#include "Utils.h"
 #include "ObjectPool.h"
+
+using namespace jl;
 
 // This is a unit test of the various object pool classes.
 namespace
@@ -140,14 +142,17 @@ namespace
                     new( pPool->Alloc() ) TestObject( g_ppSampleContents[i] )
                 );
                 
-                // Ensure that internal allocation count is accurate
-                assert( i + 1 == pPool->CountAllocations() );
-                
-                // Ensure that free list size corresponds to current number of allocations
-                assert( pPool->CountAllocations() == pPool->GetCapacity() - ObjectPool::FreeListSize(pPool->GetFreeListHead()) );
-                       
-                // Ensure that allocations haven't been corrupted
-                assert( TestState::IsValidArray(pTestState) );
+                // Validations
+                {
+                    // Ensure that internal allocation count is accurate
+                    assert( i + 1 == pPool->CountAllocations() );
+                    
+                    // Ensure that free list size corresponds to current number of allocations
+                    assert( pPool->CountAllocations() == pPool->GetCapacity() - ObjectPool::FreeListSize(pPool->GetFreeListHead()) );
+                    
+                    // Ensure that allocations haven't been corrupted
+                    assert( TestState::IsValidArray(pTestState) );                    
+                }
             }
             
             // Random replacements
@@ -231,7 +236,7 @@ namespace
     }
 }
 
-void ObjectPoolUnitTest()
+void ObjectPoolTest()
 {
     enum { ePoolCapacity = 1000 };
     

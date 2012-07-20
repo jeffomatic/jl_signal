@@ -1,0 +1,236 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3752E28C15B8F6E9005B47D7 /* DoublyLinkedListTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3752E26E15B8F64E005B47D7 /* DoublyLinkedListTest.cpp */; };
+		3752E28D15B8F6E9005B47D7 /* ObjectPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3752E27015B8F64E005B47D7 /* ObjectPool.cpp */; };
+		3752E28E15B8F6E9005B47D7 /* ObjectPoolTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3752E27315B8F64E005B47D7 /* ObjectPoolTest.cpp */; };
+		3752E28F15B8F6E9005B47D7 /* SignalBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3752E27615B8F64E005B47D7 /* SignalBase.cpp */; };
+		3752E29015B8F6E9005B47D7 /* SignalTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3752E27A15B8F64E005B47D7 /* SignalTest.cpp */; };
+		3752E29115B8F6E9005B47D7 /* testMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3752E27B15B8F64E005B47D7 /* testMain.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		3752E27F15B8F66C005B47D7 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		3752E26D15B8F64E005B47D7 /* DoublyLinkedList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DoublyLinkedList.h; path = ../../../src/DoublyLinkedList.h; sourceTree = "<group>"; };
+		3752E26E15B8F64E005B47D7 /* DoublyLinkedListTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DoublyLinkedListTest.cpp; path = ../../../src/DoublyLinkedListTest.cpp; sourceTree = "<group>"; };
+		3752E26F15B8F64E005B47D7 /* FastDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FastDelegate.h; path = ../../../src/FastDelegate.h; sourceTree = "<group>"; };
+		3752E27015B8F64E005B47D7 /* ObjectPool.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ObjectPool.cpp; path = ../../../src/ObjectPool.cpp; sourceTree = "<group>"; };
+		3752E27115B8F64E005B47D7 /* ObjectPool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ObjectPool.h; path = ../../../src/ObjectPool.h; sourceTree = "<group>"; };
+		3752E27215B8F64E005B47D7 /* ObjectPoolScopedAllocator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ObjectPoolScopedAllocator.h; path = ../../../src/ObjectPoolScopedAllocator.h; sourceTree = "<group>"; };
+		3752E27315B8F64E005B47D7 /* ObjectPoolTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ObjectPoolTest.cpp; path = ../../../src/ObjectPoolTest.cpp; sourceTree = "<group>"; };
+		3752E27415B8F64E005B47D7 /* ScopedAllocator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ScopedAllocator.h; path = ../../../src/ScopedAllocator.h; sourceTree = "<group>"; };
+		3752E27515B8F64E005B47D7 /* Signal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Signal.h; path = ../../../src/Signal.h; sourceTree = "<group>"; };
+		3752E27615B8F64E005B47D7 /* SignalBase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SignalBase.cpp; path = ../../../src/SignalBase.cpp; sourceTree = "<group>"; };
+		3752E27715B8F64E005B47D7 /* SignalBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SignalBase.h; path = ../../../src/SignalBase.h; sourceTree = "<group>"; };
+		3752E27815B8F64E005B47D7 /* SignalConnectionPools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SignalConnectionPools.h; path = ../../../src/SignalConnectionPools.h; sourceTree = "<group>"; };
+		3752E27915B8F64E005B47D7 /* SignalDefinitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SignalDefinitions.h; path = ../../../src/SignalDefinitions.h; sourceTree = "<group>"; };
+		3752E27A15B8F64E005B47D7 /* SignalTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SignalTest.cpp; path = ../../../src/SignalTest.cpp; sourceTree = "<group>"; };
+		3752E27B15B8F64E005B47D7 /* testMain.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = testMain.cpp; path = ../../../src/testMain.cpp; sourceTree = "<group>"; };
+		3752E27C15B8F64E005B47D7 /* Utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Utils.h; path = ../../../src/Utils.h; sourceTree = "<group>"; };
+		3752E28115B8F66C005B47D7 /* jl_signal */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jl_signal; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3752E27E15B8F66C005B47D7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3752E26415B8F63F005B47D7 = {
+			isa = PBXGroup;
+			children = (
+				3752E26D15B8F64E005B47D7 /* DoublyLinkedList.h */,
+				3752E26E15B8F64E005B47D7 /* DoublyLinkedListTest.cpp */,
+				3752E26F15B8F64E005B47D7 /* FastDelegate.h */,
+				3752E27015B8F64E005B47D7 /* ObjectPool.cpp */,
+				3752E27115B8F64E005B47D7 /* ObjectPool.h */,
+				3752E27215B8F64E005B47D7 /* ObjectPoolScopedAllocator.h */,
+				3752E27315B8F64E005B47D7 /* ObjectPoolTest.cpp */,
+				3752E27415B8F64E005B47D7 /* ScopedAllocator.h */,
+				3752E27515B8F64E005B47D7 /* Signal.h */,
+				3752E27615B8F64E005B47D7 /* SignalBase.cpp */,
+				3752E27715B8F64E005B47D7 /* SignalBase.h */,
+				3752E27815B8F64E005B47D7 /* SignalConnectionPools.h */,
+				3752E27915B8F64E005B47D7 /* SignalDefinitions.h */,
+				3752E27A15B8F64E005B47D7 /* SignalTest.cpp */,
+				3752E27B15B8F64E005B47D7 /* testMain.cpp */,
+				3752E27C15B8F64E005B47D7 /* Utils.h */,
+				3752E28215B8F66C005B47D7 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3752E28215B8F66C005B47D7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3752E28115B8F66C005B47D7 /* jl_signal */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3752E28015B8F66C005B47D7 /* jl_signal */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3752E28915B8F66C005B47D7 /* Build configuration list for PBXNativeTarget "jl_signal" */;
+			buildPhases = (
+				3752E27D15B8F66C005B47D7 /* Sources */,
+				3752E27E15B8F66C005B47D7 /* Frameworks */,
+				3752E27F15B8F66C005B47D7 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = jl_signal;
+			productName = jl_signal;
+			productReference = 3752E28115B8F66C005B47D7 /* jl_signal */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3752E26615B8F63F005B47D7 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0430;
+			};
+			buildConfigurationList = 3752E26915B8F63F005B47D7 /* Build configuration list for PBXProject "jl_signal" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 3752E26415B8F63F005B47D7;
+			productRefGroup = 3752E28215B8F66C005B47D7 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3752E28015B8F66C005B47D7 /* jl_signal */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3752E27D15B8F66C005B47D7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3752E28C15B8F6E9005B47D7 /* DoublyLinkedListTest.cpp in Sources */,
+				3752E28D15B8F6E9005B47D7 /* ObjectPool.cpp in Sources */,
+				3752E28E15B8F6E9005B47D7 /* ObjectPoolTest.cpp in Sources */,
+				3752E28F15B8F6E9005B47D7 /* SignalBase.cpp in Sources */,
+				3752E29015B8F6E9005B47D7 /* SignalTest.cpp in Sources */,
+				3752E29115B8F6E9005B47D7 /* testMain.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		3752E26B15B8F63F005B47D7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		3752E26C15B8F63F005B47D7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		3752E28A15B8F66C005B47D7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3752E28B15B8F66C005B47D7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3752E26915B8F63F005B47D7 /* Build configuration list for PBXProject "jl_signal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3752E26B15B8F63F005B47D7 /* Debug */,
+				3752E26C15B8F63F005B47D7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3752E28915B8F66C005B47D7 /* Build configuration list for PBXNativeTarget "jl_signal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3752E28A15B8F66C005B47D7 /* Debug */,
+				3752E28B15B8F66C005B47D7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3752E26615B8F63F005B47D7 /* Project object */;
+}

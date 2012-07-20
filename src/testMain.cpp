@@ -2,12 +2,17 @@
 #include <stdio.h>
 #include <time.h>
 
-extern void ObjectPoolUnitTest();
+extern void ObjectPoolTest();
+extern void DoublyLinkedListTest();
+extern void SignalTest();
 
 int main(int argc, char** argv)
 {
     srand( (unsigned)time(NULL) );    
-    ObjectPoolUnitTest();
+    
+    ObjectPoolTest();
+    DoublyLinkedListTest();
+    SignalTest();
     
     printf("\nDone! Press enter to continue...\n");
     getchar();    

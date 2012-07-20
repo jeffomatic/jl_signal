@@ -1,9 +1,10 @@
-#pragma once
 #ifndef _JL_OBJECT_POOL_SCOPED_ALLOCATOR_H_
 #define _JL_OBJECT_POOL_SCOPED_ALLOCATOR_H_
 
 #include "ScopedAllocator.h"
 #include "ObjectPool.h"
+
+namespace jl {
 
 /**
  * Object pool wrappers that provide ScopedAllocator interfaces
@@ -12,11 +13,12 @@
 class PreallocatedObjectPoolAllocator : public ScopedAllocator
 {
 public:
-    // Initialize object pool with preallocated buffer. If the _ManageBuffer template parameter is set,
-    // you should allocate this buffer using an array-new.
-    void Init( void* pBuffer, unsigned nCapacity, unsigned nStride, bool bManageBuffer = true )
+    // Initialize object pool with preallocated buffer.
+    // If you set the PreallocatedObjectPool::eFlag_ManageBuffer flag, make sure
+    // that the buffer was created using array-new.
+    void Init( void* pBuffer, unsigned nCapacity, unsigned nStride, unsigned nFlags )
     {
-        m_oPool.Init( pBuffer, nCapacity, nStride, bManageBuffer );
+        m_oPool.Init( pBuffer, nCapacity, nStride, nFlags );
     }
 
     void Deinit()
@@ -46,10 +48,10 @@ private:
 };
 
 template<unsigned _Stride, unsigned _Capacity>
-class StaticObjectPoolAllocator : public ScopedAllocator
+class FixedObjectPoolAllocator : public ScopedAllocator
 {
 public:
-    typedef StaticObjectPool<_Stride, _Capacity> InternalObjectPool;
+    typedef StaticObjectPool<_Stride, _Capacity> TObjectPool;
 
     unsigned CountAllocations() const
     {
@@ -69,7 +71,9 @@ public:
     }
 
 private:
-    InternalObjectPool m_oPool;
+    TObjectPool m_oPool;
 };
+    
+} // namespace jl
 
-#endif // _JL_OBJECT_POOL_SCOPED_ALLOCATOR_H_
+#endif // ! defined( _JL_OBJECT_POOL_SCOPED_ALLOCATOR_H_ )

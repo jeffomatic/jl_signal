@@ -3,58 +3,60 @@
 
 #include "ObjectPool.h"
 
-// Some helper routines
-namespace
-{
-    bool IsBounded( const void* pObject, const unsigned char* pObjectBuffer, unsigned nCapacity, unsigned nStride )
+namespace jl {
+    // Some helper routines
+    namespace
     {
-        const unsigned char* const pFirst = pObjectBuffer;
-        const unsigned char* const pLast = pObjectBuffer + nStride * (nCapacity - 1);
-        return pFirst <= pObject && pObject <= pLast;
-    }
-
-    bool IsAligned( const void* pObject, const unsigned char* pObjectBuffer, unsigned nStride )
-    {
-        const ptrdiff_t nDiff = reinterpret_cast<const unsigned char*>(pObject) - pObjectBuffer;
-        return ( nDiff % nStride == 0 );
-    }
-
-    // Populate a sorted array with pointers to every free node, and return the number of free nodes.
-    unsigned GetSortedFreeNodeList( ObjectPool::FreeNode* ppSortedFreeNodes[], ObjectPool::FreeNode* pFreeListHead )
-    {
-        unsigned nFreeCount = 0;
-
-        for ( ObjectPool::FreeNode* n = pFreeListHead; n != NULL; n = n->pNextFree )
+        bool IsBounded( const void* pObject, const unsigned char* pObjectBuffer, unsigned nCapacity, unsigned nStride )
         {
-            ppSortedFreeNodes[ nFreeCount ] = n;
-            nFreeCount += 1;
+            const unsigned char* const pFirst = pObjectBuffer;
+            const unsigned char* const pLast = pObjectBuffer + nStride * (nCapacity - 1);
+            return pFirst <= pObject && pObject <= pLast;
         }
 
-        // Insertion sort
-        for ( unsigned i = 1; i < nFreeCount; ++i )
+        bool IsAligned( const void* pObject, const unsigned char* pObjectBuffer, unsigned nStride )
         {
-            ObjectPool::FreeNode* pCurrent = ppSortedFreeNodes[ i ];
-            unsigned j = i;
+            const ptrdiff_t nDiff = reinterpret_cast<const unsigned char*>(pObject) - pObjectBuffer;
+            return ( nDiff % nStride == 0 );
+        }
 
-            // Insert pCurrent into the appropriate spot in the span [0, i]
-            while ( j > 0 && ppSortedFreeNodes[j - 1] > pCurrent )
+        // Populate a sorted array with pointers to every free node, and return the number of free nodes.
+        unsigned GetSortedFreeNodeList( ObjectPool::FreeNode* ppSortedFreeNodes[], ObjectPool::FreeNode* pFreeListHead )
+        {
+            unsigned nFreeCount = 0;
+
+            for ( ObjectPool::FreeNode* n = pFreeListHead; n != NULL; n = n->pNextFree )
             {
-                ppSortedFreeNodes[ j ] = ppSortedFreeNodes[ j - 1 ];
-                --j;
+                ppSortedFreeNodes[ nFreeCount ] = n;
+                nFreeCount += 1;
             }
 
-            ppSortedFreeNodes[ j ] = pCurrent;
-        }
+            // Insertion sort
+            for ( unsigned i = 1; i < nFreeCount; ++i )
+            {
+                ObjectPool::FreeNode* pCurrent = ppSortedFreeNodes[ i ];
+                unsigned j = i;
 
-        return nFreeCount;
-    }
-}
+                // Insert pCurrent into the appropriate spot in the span [0, i]
+                while ( j > 0 && ppSortedFreeNodes[j - 1] > pCurrent )
+                {
+                    ppSortedFreeNodes[ j ] = ppSortedFreeNodes[ j - 1 ];
+                    --j;
+                }
+
+                ppSortedFreeNodes[ j ] = pCurrent;
+            }
+
+            return nFreeCount;
+        }
+    } // anon namespace
+} // namespace jl
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
 // Initializes an object buffer as a free list and returns the head of the list
-ObjectPool::FreeNode* ObjectPool::InitFreeList( unsigned char* pObjectBuffer, unsigned nCapacity, unsigned nStride )
+jl::ObjectPool::FreeNode* jl::ObjectPool::InitFreeList( unsigned char* pObjectBuffer, unsigned nCapacity, unsigned nStride )
 {
     // Setup free list links
     unsigned char* const pLast = pObjectBuffer + nStride * (nCapacity - 1);
@@ -71,7 +73,7 @@ ObjectPool::FreeNode* ObjectPool::InitFreeList( unsigned char* pObjectBuffer, un
     return FreeNode::Cast( pObjectBuffer );
 }
 
-unsigned ObjectPool::FreeListSize( ObjectPool::FreeNode* pFreeListHead )
+unsigned jl::ObjectPool::FreeListSize( ObjectPool::FreeNode* pFreeListHead )
 {
     // Early out for degenerate case
     if ( ! pFreeListHead ) return 0;
@@ -85,13 +87,13 @@ unsigned ObjectPool::FreeListSize( ObjectPool::FreeNode* pFreeListHead )
     return n;
 }
 
-bool ObjectPool::IsBoundedAndAligned( const void* pObject, const unsigned char* pObjectBuffer, unsigned nCapacity, unsigned nStride )
+bool jl::ObjectPool::IsBoundedAndAligned( const void* pObject, const unsigned char* pObjectBuffer, unsigned nCapacity, unsigned nStride )
 {
     return IsBounded( pObject, pObjectBuffer, nCapacity, nStride )
         && IsAligned( pObject, pObjectBuffer, nStride );
 }
 
-bool ObjectPool::IsFree( const void* pObject, const FreeNode* pFreeListHead )
+bool jl::ObjectPool::IsFree( const void* pObject, const FreeNode* pFreeListHead )
 {
     // Scrub through free list and make sure this object hasn't been freed already
     for ( const ObjectPool::FreeNode* n = pFreeListHead; n != NULL; n = n->pNextFree )
@@ -108,26 +110,26 @@ bool ObjectPool::IsFree( const void* pObject, const FreeNode* pFreeListHead )
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-PreallocatedObjectPool::PreallocatedObjectPool()
+jl::PreallocatedObjectPool::PreallocatedObjectPool()
 {
     Reset();
 }
 
-PreallocatedObjectPool::PreallocatedObjectPool( void* pBuffer, unsigned nCapacity, unsigned nStride, bool bManageBuffer /*= true */ )
+jl::PreallocatedObjectPool::PreallocatedObjectPool( void* pBuffer, unsigned nCapacity, unsigned nStride, unsigned nFlags /*= eFlag_Default */ )
 {
     m_pObjectBuffer = NULL; // prevent assert in Init()
-    Init( pBuffer, nCapacity, nStride, bManageBuffer );
+    Init( pBuffer, nCapacity, nStride, nFlags );
 }
 
-PreallocatedObjectPool::~PreallocatedObjectPool()
+jl::PreallocatedObjectPool::~PreallocatedObjectPool()
 {
-    if ( m_bManageBuffer )
+    if ( m_nFlags & eFlag_ManageBuffer )
     {
         delete[] m_pObjectBuffer;
     }
 }
 
-void PreallocatedObjectPool::Init( void* pBuffer, unsigned nCapacity, unsigned nStride, bool bManageBuffer /*= true */ )
+void jl::PreallocatedObjectPool::Init( void* pBuffer, unsigned nCapacity, unsigned nStride, unsigned nFlags /*= eFlag_Default */ )
 {
     assert( m_pObjectBuffer == NULL );
 
@@ -136,12 +138,12 @@ void PreallocatedObjectPool::Init( void* pBuffer, unsigned nCapacity, unsigned n
 
     m_nCapacity = nCapacity;
     m_nStride = nStride;
-    m_bManageBuffer = bManageBuffer;
+    m_nFlags = nFlags;
 }
 
-void PreallocatedObjectPool::Deinit()
+void jl::PreallocatedObjectPool::Deinit()
 {
-    if ( m_bManageBuffer )
+    if ( m_nFlags & eFlag_ManageBuffer )
     {
         delete[] m_pObjectBuffer;
     }
@@ -149,7 +151,7 @@ void PreallocatedObjectPool::Deinit()
     Reset();
 }
 
-void PreallocatedObjectPool::Reset()
+void jl::PreallocatedObjectPool::Reset()
 {
     m_pObjectBuffer = NULL;
     m_pFreeListHead = NULL;
@@ -157,5 +159,5 @@ void PreallocatedObjectPool::Reset()
     m_nCapacity = 0;
     m_nAllocations = 0;
     m_nStride = 0;
-    m_bManageBuffer = false;
+    m_nFlags = 0;
 }
