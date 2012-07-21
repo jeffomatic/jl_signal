@@ -91,8 +91,8 @@ int main()
 {
 	// Instantiate some allocators used by the signal system.
 	enum { eMaxConnections = 50 };
-	jl::FixedSignalConnectionPool< eMaxConnections > oSignalPool;
-	jl::FixedObserverConnectionPool< eMaxConnections > oSlotPool;
+	jl::StaticSignalConnectionPool< eMaxConnections > oSignalPool;
+	jl::StaticObserverConnectionPool< eMaxConnections > oSlotPool;
     
 	// Initialize the signal system with our allocators
 	jl::SignalBase::SetCommonAllocator( &oSignalPool );
