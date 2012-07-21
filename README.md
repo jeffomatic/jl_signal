@@ -12,8 +12,8 @@ For all your [Observer pattern](http://en.wikipedia.org/wiki/Observer_pattern) n
   <dd>By default, the system uses fixed-size block allocators, which are much faster than heap allocation. They neither cause nor suffer from memory fragmentation.</dd>
   <dt>Automatic signal disconnection</dt>
   <dd>Signals work by caching pointers to observers. If an observer goes out of scope, the library makes sure to remove all internal references to that observer, so you don't have to handle it yourself.</dd>
-  <dd>Fast dispatch from signals to observers</dd>
-  <dt>Signals are implemented with Don Clugston's [FastDelegate](http://www.codeproject.com/Articles/7150/Member-Function-Pointers-and-the-Fastest-Possible) library, which can execute arbitrary callbacks as fast as is theoretically possible. The library has some well-tested hacks under the hood, and works for most mainstream modern compilers, including LLVM/clang.</dt>
+  <dt>Fast dispatch from signals to observers</dt>
+  <dd>Signals are implemented with Don Clugston's [FastDelegate](http://www.codeproject.com/Articles/7150/Member-Function-Pointers-and-the-Fastest-Possible) library, which can execute arbitrary callbacks as fast as is theoretically possible. The library has some well-tested hacks under the hood, and works for most mainstream modern compilers, including LLVM/clang.</dd>
   <dt>No external dependencies</dt>
   <dd>The library is mostly self-contained, with minimal dependencies on the standard library. The FastDelegate header file is bundled with the project source.</dd>
 </dl>
