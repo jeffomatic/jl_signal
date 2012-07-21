@@ -7,7 +7,7 @@ For all your [Observer pattern](http://en.wikipedia.org/wiki/Observer_pattern) n
 
 <dl>
   <dt>Dead simple API</dt>
-  <dd>The library has a minimal initialization step, but after that, it's little more than calling <code>Connect()</code> and <code>Emit()</code>. A tiny bit of template syntax is required when you declare your signals, but you can use a macro, <code>JL_SIGNAL()</code>, to simplify eliminate that. No other macros are used.</dd>
+  <dd>The library has a minimal initialization step, but after that, it's little more than calling <code>Connect()</code> and <code>Emit()</code>. A tiny bit of template syntax is required when you declare your signals, but you can use a macro, <code>JL_SIGNAL()</code>, to simplify that. No other macros are used.</dd>
   <dt>No heap allocation</dt>
   <dd>By default, the system uses fixed-size block allocators, which are much faster than heap allocation. They neither cause nor suffer from memory fragmentation.</dd>
   <dt>Automatic signal disconnection</dt>
