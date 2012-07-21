@@ -1,0 +1,41 @@
+#ifndef _JL_SIGNAL_DEFINITIONS_H_
+#define _JL_SIGNAL_DEFINITIONS_H_
+
+#include "FastDelegate.h"
+#include "Utils.h"
+#include "SignalBase.h"
+
+/**
+ * The content of the following classes (Signal0 -> Signal8) is identical,
+ * except for the number of parameters specified in the Connect() and Emit()
+ * functions.
+ */
+
+#ifdef JL_SIGNAL_ENABLE_LOGSPAM
+#include <stdio.h>
+#define JL_SIGNAL_LOG( ... ) printf( __VA_ARGS__ )
+#else
+#define JL_SIGNAL_LOG( ... )
+#endif
+
+#if defined( JL_SIGNAL_ASSERT_ON_DOUBLE_CONNECT )
+#define JL_SIGNAL_DOUBLE_CONNECTED_FUNCTION_ASSERT( _function ) JL_ASSERT( ! IsConnected(_function) )
+#define JL_SIGNAL_DOUBLE_CONNECTED_INSTANCE_METHOD_ASSERT( _obj, _method ) JL_ASSERT( ! IsConnected(_obj, _method) )
+#else
+#define JL_SIGNAL_DOUBLE_CONNECTED_FUNCTION_ASSERT( _function )
+#define JL_SIGNAL_DOUBLE_CONNECTED_INSTANCE_METHOD_ASSERT( _obj, _method )
+#endif
+
+namespace jl {
+
+#ifdef FASTDELEGATE_ALLOW_FUNCTION_TYPE_SYNTAX
+// Forward-declare a variable-signature template
+template<typename _Signature>
+class Signal;
+#endif
+
+<%= signal_classes.map{ |c| c.strip }.join("\n\n") %>
+
+} // namespace jl
+    
+#endif // ! defined( _JL_SIGNAL_DEFINITIONS_H_ )

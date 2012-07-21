@@ -114,8 +114,6 @@ namespace
     template<typename _TAllocatorFactory, unsigned _PoolSize>
     void PoolTest()
     {
-        JL_ASSERT( false );        
-        
         typedef typename _TAllocatorFactory::InternalObjectPool PoolType;
         PoolType* pPool;
         TestState pTestState[_PoolSize];

@@ -20,7 +20,7 @@ public:
     void DisconnectSignal( SignalBase* pSignal );
     
     void SetSlotConnectionAllocator( ScopedAllocator* pAllocator ) { m_oSignals.Init( pAllocator ); }
-    unsigned CountObservedSignals() const { return m_oSignals.Count(); }
+    unsigned CountSignalConnections() const { return m_oSignals.Count(); }
     
     // Interface for child classes
 protected:
@@ -60,7 +60,7 @@ class SignalBase
 public:
     virtual ~SignalBase() {};
     
-    virtual unsigned CountObservers() const = 0;
+    virtual unsigned CountConnections() const = 0;
     
     // Interface for derived signal classes
 protected:

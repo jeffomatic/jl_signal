@@ -28,23 +28,24 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3752E26D15B8F64E005B47D7 /* DoublyLinkedList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DoublyLinkedList.h; path = ../../../src/DoublyLinkedList.h; sourceTree = "<group>"; };
-		3752E26E15B8F64E005B47D7 /* DoublyLinkedListTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DoublyLinkedListTest.cpp; path = ../../../src/DoublyLinkedListTest.cpp; sourceTree = "<group>"; };
+		3752E26D15B8F64E005B47D7 /* DoublyLinkedList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = DoublyLinkedList.h; path = ../../../src/DoublyLinkedList.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		3752E26E15B8F64E005B47D7 /* DoublyLinkedListTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = DoublyLinkedListTest.cpp; path = ../../../src/DoublyLinkedListTest.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		3752E26F15B8F64E005B47D7 /* FastDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FastDelegate.h; path = ../../../src/FastDelegate.h; sourceTree = "<group>"; };
-		3752E27015B8F64E005B47D7 /* ObjectPool.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ObjectPool.cpp; path = ../../../src/ObjectPool.cpp; sourceTree = "<group>"; };
-		3752E27115B8F64E005B47D7 /* ObjectPool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ObjectPool.h; path = ../../../src/ObjectPool.h; sourceTree = "<group>"; };
-		3752E27215B8F64E005B47D7 /* ObjectPoolScopedAllocator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ObjectPoolScopedAllocator.h; path = ../../../src/ObjectPoolScopedAllocator.h; sourceTree = "<group>"; };
+		3752E27015B8F64E005B47D7 /* ObjectPool.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = ObjectPool.cpp; path = ../../../src/ObjectPool.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		3752E27115B8F64E005B47D7 /* ObjectPool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = ObjectPool.h; path = ../../../src/ObjectPool.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		3752E27215B8F64E005B47D7 /* ObjectPoolScopedAllocator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 2; name = ObjectPoolScopedAllocator.h; path = ../../../src/ObjectPoolScopedAllocator.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		3752E27315B8F64E005B47D7 /* ObjectPoolTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ObjectPoolTest.cpp; path = ../../../src/ObjectPoolTest.cpp; sourceTree = "<group>"; };
 		3752E27415B8F64E005B47D7 /* ScopedAllocator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ScopedAllocator.h; path = ../../../src/ScopedAllocator.h; sourceTree = "<group>"; };
 		3752E27515B8F64E005B47D7 /* Signal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Signal.h; path = ../../../src/Signal.h; sourceTree = "<group>"; };
 		3752E27615B8F64E005B47D7 /* SignalBase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SignalBase.cpp; path = ../../../src/SignalBase.cpp; sourceTree = "<group>"; };
 		3752E27715B8F64E005B47D7 /* SignalBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SignalBase.h; path = ../../../src/SignalBase.h; sourceTree = "<group>"; };
-		3752E27815B8F64E005B47D7 /* SignalConnectionPools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SignalConnectionPools.h; path = ../../../src/SignalConnectionPools.h; sourceTree = "<group>"; };
-		3752E27915B8F64E005B47D7 /* SignalDefinitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SignalDefinitions.h; path = ../../../src/SignalDefinitions.h; sourceTree = "<group>"; };
+		3752E27815B8F64E005B47D7 /* StaticSignalConnectionAllocators.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = StaticSignalConnectionAllocators.h; path = ../../../src/StaticSignalConnectionAllocators.h; sourceTree = "<group>"; };
+		3752E27915B8F64E005B47D7 /* SignalDefinitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = SignalDefinitions.h; path = ../../../src/SignalDefinitions.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		3752E27A15B8F64E005B47D7 /* SignalTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SignalTest.cpp; path = ../../../src/SignalTest.cpp; sourceTree = "<group>"; };
 		3752E27B15B8F64E005B47D7 /* testMain.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = testMain.cpp; path = ../../../src/testMain.cpp; sourceTree = "<group>"; };
 		3752E27C15B8F64E005B47D7 /* Utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Utils.h; path = ../../../src/Utils.h; sourceTree = "<group>"; };
 		3752E28115B8F66C005B47D7 /* jl_signal */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jl_signal; sourceTree = BUILT_PRODUCTS_DIR; };
+		37F00C2415BB050E00C6929E /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.md; path = ../../../README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +62,7 @@
 		3752E26415B8F63F005B47D7 = {
 			isa = PBXGroup;
 			children = (
+				37F00C2215BB050000C6929E /* doc */,
 				3752E26D15B8F64E005B47D7 /* DoublyLinkedList.h */,
 				3752E26E15B8F64E005B47D7 /* DoublyLinkedListTest.cpp */,
 				3752E26F15B8F64E005B47D7 /* FastDelegate.h */,
@@ -72,7 +74,7 @@
 				3752E27515B8F64E005B47D7 /* Signal.h */,
 				3752E27615B8F64E005B47D7 /* SignalBase.cpp */,
 				3752E27715B8F64E005B47D7 /* SignalBase.h */,
-				3752E27815B8F64E005B47D7 /* SignalConnectionPools.h */,
+				3752E27815B8F64E005B47D7 /* StaticSignalConnectionAllocators.h */,
 				3752E27915B8F64E005B47D7 /* SignalDefinitions.h */,
 				3752E27A15B8F64E005B47D7 /* SignalTest.cpp */,
 				3752E27B15B8F64E005B47D7 /* testMain.cpp */,
@@ -87,6 +89,14 @@
 				3752E28115B8F66C005B47D7 /* jl_signal */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		37F00C2215BB050000C6929E /* doc */ = {
+			isa = PBXGroup;
+			children = (
+				37F00C2415BB050E00C6929E /* README.md */,
+			);
+			name = doc;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -205,6 +215,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -229,6 +240,7 @@
 				3752E28B15B8F66C005B47D7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
