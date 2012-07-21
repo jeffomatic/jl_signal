@@ -19,29 +19,21 @@ Usage example
 -------------
 
 ```cpp
-// Include the library.
-#include "Signal.h"
-
-// Instantiate some allocators used by the signal system.
-enum { eMaxConnections = 50 };
-jl::FixedSignalConnectionPool< eMaxConnections > oSignalPool;
-jl::FixedObserverConnectionPool< eMaxConnections > oSlotPool;
-
-// Initialize the signal system with our allocators
-jl::Signal::SetCommonAllocator( &oSignalPool );
-jl::SignalObserver::SetCommonAllocator( &oSlotPool );
+#include "Signal.h" // base library
+#include "SignalConnectionPools.h" // some default allocators
+#include <iostream> // for output
 
 // A class that will receive signals.
 class Orc : public jl::SignalObserver
 {
 public:
     // This method will be used as a SLOT.
-    void Retort() { std::cout << "GRUMBLE GRUMBLE GRUMBLE..."; }
-
+    void Retort() { std::cout << "GRUMBLE GRUMBLE GRUMBLE...\n"; }
+    
     // Another slot, this one taking parameters.
     void TakeDamage( float fDamage )
     {
-        if (fDamage > 20.f) std::cout << "Orc down!";
+        if (fDamage >= 20.f) std::cout << "Orc down!\n";
     }
 };
 
@@ -51,7 +43,7 @@ class HipsterBystander : public jl::SignalObserver
 public:
     void UnimpressedComeback()
     {
-        std::cout << "Whatever, I think the first movie was better.";
+        std::cout << "Whatever, I think the first movie was better.\n";
     }
 };
 
@@ -61,9 +53,9 @@ class Prop : public jl::SignalObserver
 public:
     void TakeDamage( float fDamage )
     {
-        if (fDamage > 10.f) std::cout << "SMASH!";
+        if (fDamage >= 10.f) std::cout << "SMASH!\n";
     }
-}
+};
 
 // A class that broadcasts signals.
 class Wizard
@@ -73,51 +65,65 @@ public:
     // number of slot methods.
     JL_SIGNAL() BattleCrySignal; // calls slots that take no arguments
     JL_SIGNAL( float ) MysticalShotgunSignal; // calls slots that take a single float argument
-
+    
     void BattleCry()
     {
-        std::cout << "This is my boomstick!";
+        std::cout << "This is my boomstick!\n";
         BattleCrySignal.Emit();
     };
-
+    
     void FireMysticalShotgun( float fDamage )
     {
-        std::cout << "BLAM!";
+        std::cout << "BLAM!\n";
         MysticalShotgunSignal.Emit( fDamage );
     }
 };
 
-// Instantiate our entities.
-Orc rosencrantz, guildenstern;
-HipsterBystander chad;
-Prop chair;
-Wizard merlin;
-
-// Orcs and hipster bystanders respond to battle cries
-merlin.BattleCrySignal.connect( &rosencrantz, &Orc::Retort );
-merlin.BattleCrySignal.connect( &guildenstern, &Orc::Retort );
-merlin.BattleCrySignal.connect( &chad, &HipsterBystander::UnimpressedComeback );
-
-// Orcs and props take damage
-merlin.MysticalShotgunSignal.connect( &rosencrantz, &Orc::TakeDamage );
-merlin.MysticalShotgunSignal.connect( &guildenstern, &Orc::TakeDamage );    
-merlin.MysticalShotgunSignal.connect( &chair, &Prop::TakeDamage );
-
-// Emit a signal
-merlin.BattleCry();
-
-// Output:
-// Merlin: This is my boomstick!
-// Rosencrantz: GRUMBLE GRUMBLE GRUMBLE...
-// Guildenstern: GRUMBLE GRUMBLE GRUMBLE...
-// Chad: Whatever, I think the first move was better.
-
-// Emit another signal
-merlin.FireMysticalShotgun( 20.f );
-
-// Output:
-// Merlin: BLAM!
-// Rosencrantz: Orc down!
-// Guildenstern: Orc down!
-// Chair: SMASH!
+int main()
+{
+	// Instantiate some allocators used by the signal system.
+	enum { eMaxConnections = 50 };
+	jl::FixedSignalConnectionPool< eMaxConnections > oSignalPool;
+	jl::FixedObserverConnectionPool< eMaxConnections > oSlotPool;
+    
+	// Initialize the signal system with our allocators
+	jl::SignalBase::SetCommonAllocator( &oSignalPool );
+	jl::SignalObserver::SetCommonAllocator( &oSlotPool );
+    
+	// Instantiate our entities.
+	Orc rosencrantz, guildenstern;
+	HipsterBystander chad;
+	Prop chair;
+	Wizard merlin;
+    
+	// Orcs and hipster bystanders respond to battle cries
+	merlin.BattleCrySignal.Connect( &rosencrantz, &Orc::Retort );
+	merlin.BattleCrySignal.Connect( &guildenstern, &Orc::Retort );
+	merlin.BattleCrySignal.Connect( &chad, &HipsterBystander::UnimpressedComeback );
+    
+	// Orcs and props take damage
+	merlin.MysticalShotgunSignal.Connect( &rosencrantz, &Orc::TakeDamage );
+	merlin.MysticalShotgunSignal.Connect( &guildenstern, &Orc::TakeDamage );    
+	merlin.MysticalShotgunSignal.Connect( &chair, &Prop::TakeDamage );
+    
+	// Emit a signal
+	merlin.BattleCry();
+    
+	// Output:
+	// Merlin: This is my boomstick!
+	// Rosencrantz: GRUMBLE GRUMBLE GRUMBLE...
+	// Guildenstern: GRUMBLE GRUMBLE GRUMBLE...
+	// Chad: Whatever, I think the first move was better.
+    
+	// Emit another signal
+	merlin.FireMysticalShotgun( 20.f );
+    
+	// Output:
+	// Merlin: BLAM!
+	// Rosencrantz: Orc down!
+	// Guildenstern: Orc down!
+	// Chair: SMASH!
+    
+	return 0;
+}
 ```    
