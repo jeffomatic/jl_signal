@@ -5,10 +5,18 @@ For all your [Observer pattern](http://en.wikipedia.org/wiki/Observer_pattern) n
 
 [There](http://doc.trolltech.com/signalsandslots.html) [are](http://www.boost.org/libs/signals/) [lots](http://sigslot.sourceforge.net/) [and](http://libsigc.sourceforge.net/) [lots](https://github.com/pbhogan/Signals) of C++ signals & slots systems out there. This one gives you the following:
 
-- No heap allocation
-- Automatic signal disconnection when emitters and observers go out of scope
-- Dead simple API
-- Fast dispatch from signals to observers, via Don Clugston's [FastDelegate](http://www.codeproject.com/Articles/7150/Member-Function-Pointers-and-the-Fastest-Possible)
+<dl>
+  <dt>Dead simple API</dt>
+  <dd>The library has a minimal initialization step, but after that, it's little more than calling `Connect()` and `Emit()`. A tiny bit of template syntax is required when you declare your signals, but you can use a macro, `JL_SIGNAL()`, to simplify eliminate that. No other macros are used.</dd>
+  <dt>No heap allocation</dt>
+  <dd>By default, the system uses fixed-size block allocators, which are much faster than heap allocation. They neither cause nor suffer from memory fragmentation.</dd>
+  <dt>Automatic signal disconnection</dt>
+  <dd>Signals work by caching pointers to observers. If an observer goes out of scope, the library makes sure to remove all internal references to that observer, so you don't have to handle it yourself.</dd>
+  <dd>Fast dispatch from signals to observers</dd>
+  <dt>Signals are implemented with Don Clugston's [FastDelegate](http://www.codeproject.com/Articles/7150/Member-Function-Pointers-and-the-Fastest-Possible) library, which can execute arbitrary callbacks as fast as is theoretically possible. The library has some well-tested hacks under the hood, and works for most mainstream modern compilers, including LLVM/clang.</dt>
+  <dt>No external dependencies</dt>
+  <dd>The library is mostly self-contained, with minimal dependencies on the standard library. The FastDelegate header file is bundled with the project source.</dd>
+</dl>
 
 Some anti-features:
 
