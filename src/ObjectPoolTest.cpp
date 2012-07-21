@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <new>
+#include <assert.h>
 
-#include "Utils.h"
 #include "ObjectPool.h"
 
 using namespace jl;
@@ -115,6 +114,8 @@ namespace
     template<typename _TAllocatorFactory, unsigned _PoolSize>
     void PoolTest()
     {
+        JL_ASSERT( false );        
+        
         typedef typename _TAllocatorFactory::InternalObjectPool PoolType;
         PoolType* pPool;
         TestState pTestState[_PoolSize];

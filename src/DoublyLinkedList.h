@@ -1,7 +1,7 @@
 #ifndef _JL_DOUBLY_LINKED_LIST_H_
 #define _JL_DOUBLY_LINKED_LIST_H_
 
-#include <assert.h>
+#include "Utils.h"
 #include "ScopedAllocator.h"
 
 namespace jl {
@@ -9,7 +9,7 @@ namespace jl {
 /**
  * Your basic doubly-linked list, with link nodes allocated outside of the
  * contained type.
- * Requires ScopedAllocator for node allocation.
+ * Requires a ScopedAllocator for node allocation.
  */
 template<typename _T>
 class DoublyLinkedList
@@ -44,7 +44,7 @@ public:
         
         iterator& operator--()
         {
-            assert( m_pCurrent );
+            JL_ASSERT( m_pCurrent );
             
             if ( m_pCurrent )
             {
@@ -56,7 +56,7 @@ public:
         
         iterator& operator++()
         {
-            assert( m_pCurrent );
+            JL_ASSERT( m_pCurrent );
             
             if ( m_pCurrent )
             {
@@ -97,7 +97,7 @@ public:
 
         const_iterator& operator--()
         {
-            assert( m_pCurrent );
+            JL_ASSERT( m_pCurrent );
             
             if ( m_pCurrent )
             {
@@ -109,7 +109,7 @@ public:
         
         const_iterator& operator++()
         {
-            assert( m_pCurrent );
+            JL_ASSERT( m_pCurrent );
             
             if ( m_pCurrent )
             {
@@ -185,7 +185,7 @@ public:
     {
         // Create a node to contain the object.
         Node* pNode = CreateNode();
-        assert( pNode );
+        JL_ASSERT( pNode );
         
         if ( ! pNode )
         {
@@ -204,7 +204,7 @@ public:
         }
         else
         {
-            assert( ! m_pHead );
+            JL_ASSERT( ! m_pHead );
             m_pHead = pNode;
             m_pTail = pNode;
         }
@@ -234,7 +234,7 @@ public:
     // This will advance the iterator if the removal was successful.
     bool Remove( iterator& i )
     {
-        assert( i.m_pList == this );
+        JL_ASSERT( i.m_pList == this );
         if ( i.m_pList != this )
         {
             return false;
@@ -269,7 +269,7 @@ public:
             }
         }
     
-        assert( nSizeBefore >= m_nObjectCount );
+        JL_ASSERT( nSizeBefore >= m_nObjectCount );
         return nSizeBefore - m_nObjectCount;
     }    
     
@@ -304,14 +304,14 @@ public:
     // O(N) random access
     TObject& operator[]( unsigned n )
     {
-        assert( n < m_nObjectCount );
+        JL_ASSERT( n < m_nObjectCount );
         
         unsigned i = 0;
         Node* pNode = m_pHead;
         
         for (;;)
         {
-            assert( pNode );
+            JL_ASSERT( pNode );
             
             if ( i == n )
             {
@@ -325,14 +325,14 @@ public:
     
     const TObject& operator[]( unsigned n ) const
     {
-        assert( n < m_nObjectCount );
+        JL_ASSERT( n < m_nObjectCount );
         
         unsigned i = 0;
         const Node* pNode = m_pHead;
         
         for (;;)
         {
-            assert( pNode );
+            JL_ASSERT( pNode );
             
             if ( i == n )
             {
@@ -364,7 +364,7 @@ public:
 private:
     bool RemoveNode( Node* pNode )
     {
-        assert( m_nObjectCount );
+        JL_ASSERT( m_nObjectCount );
         if ( ! m_nObjectCount )
         {
             return false;

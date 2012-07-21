@@ -3,7 +3,12 @@
 
 #include "FastDelegate.h"
 
+// Uncomment this to see verbose console messages about Signal/SignalObserver
+// connections and disconnections. Recommended for debug only.
 //#define JL_SIGNAL_ENABLE_LOGSPAM
+
+// Uncomment this to force assertion failures when a SignalObserver tries
+// to connect the same slot to the same signal twice. Recommended for debug only.
 //#define JL_SIGNAL_ASSERT_ON_DOUBLE_CONNECT
 
 /**
@@ -44,7 +49,7 @@
 #ifdef FASTDELEGATE_ALLOW_FUNCTION_TYPE_SYNTAX
 #define JL_SIGNAL( ... ) jl::Signal< void( __VA_ARGS__ ) >
 #else
-#define JL_SIGNAL( ... ) typedef int JL_SIGNAL_ERROR_Your_Compiler_Does_Not_Support_This_Syntax[-1]
+#define JL_SIGNAL( ... ) JL_COMPILER_ASSERT( false, Your_Compiler_Does_Not_Support_This_Syntax )
 #endif // ! defined( FASTDELEGATE_ALLOW_FUNCTION_TYPE_SYNTAX )
 
 #endif // ! defined( _JL_SIGNAL_H_ )

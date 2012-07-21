@@ -1,7 +1,7 @@
 #ifndef _JL_OBJECTPOOL_H_
 #define _JL_OBJECTPOOL_H_
 
-#include <assert.h>
+#include "Utils.h"
 
 //#define JL_OBJECT_POOL_ENABLE_FREELIST_CHECK
 
@@ -13,9 +13,9 @@ namespace jl {
  *    PreallocatedObjectPool
  *    StaticObjectPool
  *
- * For alignment issues related to the fixed object pools, this does not derive from
- * the ScopedAllocator interface. If you need an object pool to act as a ScopedAllocator,
- * please see ObjectPoolScopedAllocator.h.
+ * Due to data alignment issues, this does not derive from the ScopedAllocator
+ * interface. If you need an object pool to act as a ScopedAllocator, please
+ * see ObjectPoolScopedAllocator.h.
  *
  * Example:
  *    // Create a pool of 100 physics components
@@ -108,7 +108,7 @@ public:
     // Allocates memory. Does not call constructor--you should do a placement new on the returned pointer.
     void* Alloc()
     {
-        assert( m_pObjectBuffer );
+        JL_ASSERT( m_pObjectBuffer );
         void* p = ObjectPool::Alloc( m_pFreeListHead );
 
         if ( p )
@@ -122,10 +122,10 @@ public:
     // Free allocated memory, with error checking. Does NOT call destructor.
     void Free( void* pObject )
     {
-        assert( m_pObjectBuffer );
-        assert( ObjectPool::IsBoundedAndAligned(pObject, m_pObjectBuffer, m_nCapacity, m_nStride) );
+        JL_ASSERT( m_pObjectBuffer );
+        JL_ASSERT( ObjectPool::IsBoundedAndAligned(pObject, m_pObjectBuffer, m_nCapacity, m_nStride) );
 #ifdef JL_OBJECT_POOL_ENABLE_FREELIST_CHECK
-        assert( ! ObjectPool::IsFree(pObject, m_pFreeListHead) );
+        JL_ASSERT( ! ObjectPool::IsFree(pObject, m_pFreeListHead) );
 #endif
 
         ObjectPool::Free( pObject, m_pFreeListHead );
@@ -195,9 +195,9 @@ public:
     // Free allocated memory, with error checking. Does NOT call destructor.
     void Free( void* pObject )
     {
-        assert( ObjectPool::IsBoundedAndAligned(pObject, m_pObjectBuffer, eCapacity, eStride) );
+        JL_ASSERT( ObjectPool::IsBoundedAndAligned(pObject, m_pObjectBuffer, eCapacity, eStride) );
 #ifdef JL_OBJECT_POOL_ENABLE_FREELIST_CHECK
-        assert( ! ObjectPool::IsFree(pObject, m_pFreeListHead) );
+        JL_ASSERT( ! ObjectPool::IsFree(pObject, m_pFreeListHead) );
 #endif
 
         ObjectPool::Free( pObject, m_pFreeListHead );

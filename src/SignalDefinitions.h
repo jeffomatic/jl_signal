@@ -1,8 +1,8 @@
 #ifndef _JL_SIGNAL_DEFINITIONS_H_
 #define _JL_SIGNAL_DEFINITIONS_H_
 
-#include <assert.h>
 #include "FastDelegate.h"
+#include "Utils.h"
 #include "SignalBase.h"
 
 /**
@@ -19,7 +19,7 @@
 #endif
 
 #if defined( JL_SIGNAL_ASSERT_ON_DOUBLE_CONNECT )
-#define JL_SIGNAL_DOUBLE_CONNECT_ASSERT( _obj, _method ) assert( ! IsConnected(_obj, _method) )
+#define JL_SIGNAL_DOUBLE_CONNECT_ASSERT( _obj, _method ) JL_ASSERT( ! IsConnected(_obj, _method) )
 #else
 #define JL_SIGNAL_DOUBLE_CONNECT_ASSERT( _obj, _method )
 #endif
@@ -80,11 +80,11 @@ public:
         
         JL_SIGNAL_DOUBLE_CONNECT_ASSERT( pObject, fpMethod );
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
-        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, fpMethod );
+        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
         
         Connection c = { fastdelegate::MakeDelegate(pObject, fpMethod), pObserver };
         const bool bAdded = m_oConnections.Add( c );
-        assert( bAdded );
+        JL_ASSERT( bAdded );
         NotifyObserverConnect( pObserver );
     }
     
@@ -98,11 +98,11 @@ public:
         
         JL_SIGNAL_DOUBLE_CONNECT_ASSERT( pObject, fpMethod );
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
-        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, fpMethod );
+        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
         
         Connection c = { fastdelegate::MakeDelegate(pObject, fpMethod), pObserver };
         const bool bAdded = m_oConnections.Add( c );
-        assert( bAdded );
+        JL_ASSERT( bAdded );
         NotifyObserverConnect( pObserver );
     }
     
@@ -270,11 +270,11 @@ public:
         
         JL_SIGNAL_DOUBLE_CONNECT_ASSERT( pObject, fpMethod );
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
-        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, fpMethod );
+        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
         
         Connection c = { fastdelegate::MakeDelegate(pObject, fpMethod), pObserver };
         const bool bAdded = m_oConnections.Add( c );
-        assert( bAdded );
+        JL_ASSERT( bAdded );
         NotifyObserverConnect( pObserver );
     }
     
@@ -288,11 +288,11 @@ public:
         
         JL_SIGNAL_DOUBLE_CONNECT_ASSERT( pObject, fpMethod );
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
-        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, fpMethod );
+        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
         
         Connection c = { fastdelegate::MakeDelegate(pObject, fpMethod), pObserver };
         const bool bAdded = m_oConnections.Add( c );
-        assert( bAdded );
+        JL_ASSERT( bAdded );
         NotifyObserverConnect( pObserver );
     }
     
@@ -460,11 +460,11 @@ public:
         
         JL_SIGNAL_DOUBLE_CONNECT_ASSERT( pObject, fpMethod );
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
-        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, fpMethod );
+        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
         
         Connection c = { fastdelegate::MakeDelegate(pObject, fpMethod), pObserver };
         const bool bAdded = m_oConnections.Add( c );
-        assert( bAdded );
+        JL_ASSERT( bAdded );
         NotifyObserverConnect( pObserver );
     }
     
@@ -478,11 +478,11 @@ public:
         
         JL_SIGNAL_DOUBLE_CONNECT_ASSERT( pObject, fpMethod );
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
-        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, fpMethod );
+        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
         
         Connection c = { fastdelegate::MakeDelegate(pObject, fpMethod), pObserver };
         const bool bAdded = m_oConnections.Add( c );
-        assert( bAdded );
+        JL_ASSERT( bAdded );
         NotifyObserverConnect( pObserver );
     }
     
@@ -650,11 +650,11 @@ public:
         
         JL_SIGNAL_DOUBLE_CONNECT_ASSERT( pObject, fpMethod );
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
-        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, fpMethod );
+        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
         
         Connection c = { fastdelegate::MakeDelegate(pObject, fpMethod), pObserver };
         const bool bAdded = m_oConnections.Add( c );
-        assert( bAdded );
+        JL_ASSERT( bAdded );
         NotifyObserverConnect( pObserver );
     }
     
@@ -668,11 +668,11 @@ public:
         
         JL_SIGNAL_DOUBLE_CONNECT_ASSERT( pObject, fpMethod );
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
-        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, fpMethod );
+        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
         
         Connection c = { fastdelegate::MakeDelegate(pObject, fpMethod), pObserver };
         const bool bAdded = m_oConnections.Add( c );
-        assert( bAdded );
+        JL_ASSERT( bAdded );
         NotifyObserverConnect( pObserver );
     }
     
@@ -840,11 +840,11 @@ public:
         
         JL_SIGNAL_DOUBLE_CONNECT_ASSERT( pObject, fpMethod );
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
-        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, fpMethod );
+        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
         
         Connection c = { fastdelegate::MakeDelegate(pObject, fpMethod), pObserver };
         const bool bAdded = m_oConnections.Add( c );
-        assert( bAdded );
+        JL_ASSERT( bAdded );
         NotifyObserverConnect( pObserver );
     }
     
@@ -858,11 +858,11 @@ public:
         
         JL_SIGNAL_DOUBLE_CONNECT_ASSERT( pObject, fpMethod );
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
-        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, fpMethod );
+        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
         
         Connection c = { fastdelegate::MakeDelegate(pObject, fpMethod), pObserver };
         const bool bAdded = m_oConnections.Add( c );
-        assert( bAdded );
+        JL_ASSERT( bAdded );
         NotifyObserverConnect( pObserver );
     }
     
@@ -1030,11 +1030,11 @@ public:
         
         JL_SIGNAL_DOUBLE_CONNECT_ASSERT( pObject, fpMethod );
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
-        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, fpMethod );
+        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
         
         Connection c = { fastdelegate::MakeDelegate(pObject, fpMethod), pObserver };
         const bool bAdded = m_oConnections.Add( c );
-        assert( bAdded );
+        JL_ASSERT( bAdded );
         NotifyObserverConnect( pObserver );
     }
     
@@ -1048,11 +1048,11 @@ public:
         
         JL_SIGNAL_DOUBLE_CONNECT_ASSERT( pObject, fpMethod );
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
-        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, fpMethod );
+        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
         
         Connection c = { fastdelegate::MakeDelegate(pObject, fpMethod), pObserver };
         const bool bAdded = m_oConnections.Add( c );
-        assert( bAdded );
+        JL_ASSERT( bAdded );
         NotifyObserverConnect( pObserver );
     }
     
@@ -1220,11 +1220,11 @@ public:
         
         JL_SIGNAL_DOUBLE_CONNECT_ASSERT( pObject, fpMethod );
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
-        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, fpMethod );
+        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
         
         Connection c = { fastdelegate::MakeDelegate(pObject, fpMethod), pObserver };
         const bool bAdded = m_oConnections.Add( c );
-        assert( bAdded );
+        JL_ASSERT( bAdded );
         NotifyObserverConnect( pObserver );
     }
     
@@ -1238,11 +1238,11 @@ public:
         
         JL_SIGNAL_DOUBLE_CONNECT_ASSERT( pObject, fpMethod );
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
-        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, fpMethod );
+        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
         
         Connection c = { fastdelegate::MakeDelegate(pObject, fpMethod), pObserver };
         const bool bAdded = m_oConnections.Add( c );
-        assert( bAdded );
+        JL_ASSERT( bAdded );
         NotifyObserverConnect( pObserver );
     }
     
@@ -1410,11 +1410,11 @@ public:
         
         JL_SIGNAL_DOUBLE_CONNECT_ASSERT( pObject, fpMethod );
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
-        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, fpMethod );
+        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
         
         Connection c = { fastdelegate::MakeDelegate(pObject, fpMethod), pObserver };
         const bool bAdded = m_oConnections.Add( c );
-        assert( bAdded );
+        JL_ASSERT( bAdded );
         NotifyObserverConnect( pObserver );
     }
     
@@ -1428,11 +1428,11 @@ public:
         
         JL_SIGNAL_DOUBLE_CONNECT_ASSERT( pObject, fpMethod );
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
-        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, fpMethod );
+        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
         
         Connection c = { fastdelegate::MakeDelegate(pObject, fpMethod), pObserver };
         const bool bAdded = m_oConnections.Add( c );
-        assert( bAdded );
+        JL_ASSERT( bAdded );
         NotifyObserverConnect( pObserver );
     }
     
@@ -1600,11 +1600,11 @@ public:
         
         JL_SIGNAL_DOUBLE_CONNECT_ASSERT( pObject, fpMethod );
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
-        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, fpMethod );
+        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
         
         Connection c = { fastdelegate::MakeDelegate(pObject, fpMethod), pObserver };
         const bool bAdded = m_oConnections.Add( c );
-        assert( bAdded );
+        JL_ASSERT( bAdded );
         NotifyObserverConnect( pObserver );
     }
     
@@ -1618,11 +1618,11 @@ public:
         
         JL_SIGNAL_DOUBLE_CONNECT_ASSERT( pObject, fpMethod );
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
-        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, fpMethod );
+        JL_SIGNAL_LOG( "Signal %p connecting to Observer %p (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
         
         Connection c = { fastdelegate::MakeDelegate(pObject, fpMethod), pObserver };
         const bool bAdded = m_oConnections.Add( c );
-        assert( bAdded );
+        JL_ASSERT( bAdded );
         NotifyObserverConnect( pObserver );
     }
     

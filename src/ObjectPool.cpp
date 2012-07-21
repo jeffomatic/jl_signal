@@ -1,5 +1,4 @@
 #include <stddef.h>
-#include <assert.h>
 
 #include "ObjectPool.h"
 
@@ -117,7 +116,7 @@ jl::PreallocatedObjectPool::PreallocatedObjectPool()
 
 jl::PreallocatedObjectPool::PreallocatedObjectPool( void* pBuffer, unsigned nCapacity, unsigned nStride, unsigned nFlags /*= eFlag_Default */ )
 {
-    m_pObjectBuffer = NULL; // prevent assert in Init()
+    m_pObjectBuffer = NULL; // prevent assertion failure in Init()
     Init( pBuffer, nCapacity, nStride, nFlags );
 }
 
@@ -131,7 +130,7 @@ jl::PreallocatedObjectPool::~PreallocatedObjectPool()
 
 void jl::PreallocatedObjectPool::Init( void* pBuffer, unsigned nCapacity, unsigned nStride, unsigned nFlags /*= eFlag_Default */ )
 {
-    assert( m_pObjectBuffer == NULL );
+    JL_ASSERT( m_pObjectBuffer == NULL );
 
     m_pObjectBuffer = (unsigned char*)pBuffer;
     m_pFreeListHead = ObjectPool::InitFreeList( m_pObjectBuffer, nCapacity, nStride );

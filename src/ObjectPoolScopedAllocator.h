@@ -34,7 +34,7 @@ public:
     // Virtual overrides
     void* Alloc( size_t nBytes )
     {
-        assert( nBytes <= m_oPool.GetStride() );
+        JL_ASSERT( nBytes <= m_oPool.GetStride() );
         return m_oPool.Alloc();
     }
 
@@ -61,7 +61,7 @@ public:
     // Virtual overrides
     void* Alloc( size_t nBytes )
     {
-        assert( nBytes <= m_oPool.GetStride() );
+        JL_ASSERT( nBytes <= m_oPool.GetStride() );
         return m_oPool.Alloc();
     }
 

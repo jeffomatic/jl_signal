@@ -16,7 +16,7 @@ void jl::SignalObserver::DisconnectSignal( SignalBase* pSignal )
     {
         if ( *i == pSignal )
         {
-            JL_SIGNAL_LOG( "Observer %p disconnecting signal %p", pSignal );
+            JL_SIGNAL_LOG( "Observer %p disconnecting signal %p", this, pSignal );
             i->OnObserverDisconnect( this );
             break;
         }
@@ -43,7 +43,7 @@ void jl::SignalObserver::OnSignalConnect( SignalBase* pSignal )
 {
     JL_SIGNAL_LOG( "\tObserver %p received connection message from signal %p\n", this, pSignal );
     const bool bAdded = m_oSignals.Add( pSignal );
-    assert( bAdded );
+    JL_ASSERT( bAdded );
 }
 
 void jl::SignalObserver::OnSignalDisconnect( SignalBase* pSignal )
@@ -56,7 +56,7 @@ void jl::SignalObserver::OnSignalDisconnect( SignalBase* pSignal )
     {
         if ( *i == pSignal )
         {
-            JL_SIGNAL_LOG( "\t\tRemoving connection to signal\n", this, pSignal );
+            JL_SIGNAL_LOG( "\t\tRemoving connection to signal %p\n", pSignal );
             m_oSignals.Remove( i );
         }
         else
