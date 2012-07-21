@@ -154,8 +154,8 @@ void SignalTest()
 {
     // Allocators
     enum { eMaxConnections = 500, eSignalMaxArgs = 8 };
-    FixedSignalConnectionPool< eMaxConnections > oSignalPool;
-    FixedObserverConnectionPool< eMaxConnections > oSlotPool;
+    StaticSignalConnectionPool< eMaxConnections > oSignalPool;
+    StaticObserverConnectionPool< eMaxConnections > oSlotPool;
     
     // Signals
     JL_SIGNAL() Sig0( & oSignalPool );

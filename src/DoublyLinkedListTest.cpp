@@ -11,7 +11,7 @@ using namespace jl;
 namespace
 {
     typedef DoublyLinkedList<const char*> StringList;
-    typedef FixedObjectPoolAllocator< sizeof(StringList::Node), 100 > StringNodeAllocator;
+    typedef StaticObjectPoolAllocator< sizeof(StringList::Node), 100 > StringNodeAllocator;
 }
 
 void DoublyLinkedListTest()

@@ -9,12 +9,12 @@ namespace jl {
 typedef Signal0<void> TDummySignal;
 
 template< unsigned _Size >
-class FixedSignalConnectionPool : public FixedObjectPoolAllocator< TDummySignal::eAllocationSize, _Size >
+class StaticSignalConnectionPool : public StaticObjectPoolAllocator< TDummySignal::eAllocationSize, _Size >
 {
 };
 
 template< unsigned _Size >
-class FixedObserverConnectionPool : public FixedObjectPoolAllocator< SignalObserver::eAllocationSize, _Size >
+class StaticObserverConnectionPool : public StaticObjectPoolAllocator< SignalObserver::eAllocationSize, _Size >
 {
 };
     

@@ -48,7 +48,7 @@ private:
 };
 
 template<unsigned _Stride, unsigned _Capacity>
-class FixedObjectPoolAllocator : public ScopedAllocator
+class StaticObjectPoolAllocator : public ScopedAllocator
 {
 public:
     typedef StaticObjectPool<_Stride, _Capacity> TObjectPool;
