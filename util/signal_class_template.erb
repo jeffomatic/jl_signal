@@ -37,8 +37,7 @@ public:
     unsigned CountConnections() const { return m_oConnections.Count(); }
     
     // Connects non-instance functions.
-    template< typename Unused >
-    void Connect( Unused (*fpFunction)(<%= arg_type_list %>) )
+    void Connect( void (*fpFunction)(<%= arg_type_list %>) )
     {
         JL_SIGNAL_DOUBLE_CONNECTED_FUNCTION_ASSERT( fpFunction );
         JL_SIGNAL_LOG( "Signal %p connection to non-instance function %p", this, BruteForceCast<void*>(fpFunction) );
@@ -49,8 +48,8 @@ public:
     }    
     
     // Connects instance methods. Class X should be equal to Y, or an ancestor type.
-    template< class X, class Y, typename Unused >
-    void Connect( Y* pObject, Unused (X::*fpMethod)(<%= arg_type_list %>) )
+    template< class X, class Y >
+    void Connect( Y* pObject, void (X::*fpMethod)(<%= arg_type_list %>) )
     {
         if ( ! pObject )
         {
@@ -68,8 +67,8 @@ public:
     }
     
     // Connects const instance methods. Class X should be equal to Y, or an ancestor type.
-    template< class X, class Y, typename Unused >
-    void Connect( Y* pObject, Unused (X::*fpMethod)(<%= arg_type_list %>) const )
+    template< class X, class Y >
+    void Connect( Y* pObject, void (X::*fpMethod)(<%= arg_type_list %>) const )
     {
         if ( ! pObject )
         {
@@ -87,22 +86,21 @@ public:
     }
     
     // Returns true if the given observer and non-instance function are connected to this signal.
-    template< typename Unused >
-    bool IsConnected( Unused (*fpFunction)(<%= arg_type_list %>) ) const
+    bool IsConnected( void (*fpFunction)(<%= arg_type_list %>) ) const
     {
         return IsConnected( Delegate(fpFunction) );
     }    
     
     // Returns true if the given observer and instance method are connected to this signal.
-    template< class X, class Y, typename Unused >
-    bool IsConnected( Y* pObject, Unused (X::*fpMethod)(<%= arg_type_list %>) ) const
+    template< class X, class Y >
+    bool IsConnected( Y* pObject, void (X::*fpMethod)(<%= arg_type_list %>) ) const
     {
         return IsConnected( Delegate(pObject, fpMethod) );
     }
     
     // Returns true if the given observer and const instance method are connected to this signal.
-    template< class X, class Y, typename Unused >
-    bool IsConnected( Y* pObject, Unused (X::*fpMethod)(<%= arg_type_list %>) const ) const
+    template< class X, class Y >
+    bool IsConnected( Y* pObject, void (X::*fpMethod)(<%= arg_type_list %>) const ) const
     {
         return IsConnected( Delegate(pObject, fpMethod) );
     }
@@ -118,8 +116,7 @@ public:
     void operator()( <%= arg_signature %> ) const { Emit( <%= arg_list %> ); }
     
     // Disconnects a non-instance method.
-    template< typename Unused >
-    void Disconnect( Unused (*fpFunction)(<%= arg_type_list %>) )
+    void Disconnect( void (*fpFunction)(<%= arg_type_list %>) )
     {
         Delegate test( fpFunction );
         

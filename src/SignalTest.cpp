@@ -211,19 +211,22 @@ void SignalTest()
 {
     // Allocators
     enum { eMaxConnections = 500, eSignalMaxArgs = 8 };
-    StaticSignalConnectionAllocator< eMaxConnections > oSignalPool;
-    StaticObserverConnectionAllocator< eMaxConnections > oSlotPool;
+    StaticSignalConnectionAllocator< eMaxConnections > oSignalConnectionAllocator;
+    StaticObserverConnectionAllocator< eMaxConnections > oObserverConnectionAllocator;
+    
+    jl::SignalBase::SetCommonConnectionAllocator( &oSignalConnectionAllocator );
+    jl::SignalObserver::SetCommonConnectionAllocator( &oObserverConnectionAllocator );
     
     // Signals
-    JL_SIGNAL() Sig0( & oSignalPool );
-    JL_SIGNAL( int ) Sig1( & oSignalPool );
-    JL_SIGNAL( int, float ) Sig2( & oSignalPool );
-    JL_SIGNAL( int, float, char ) Sig3( & oSignalPool );
-    JL_SIGNAL( int, float, char, const char* ) Sig4( & oSignalPool );
-    JL_SIGNAL( int, float, char, const char*, int ) Sig5( & oSignalPool );
-    JL_SIGNAL( int, float, char, const char*, int, float ) Sig6( & oSignalPool );
-    JL_SIGNAL( int, float, char, const char*, int, float, char ) Sig7( & oSignalPool );
-    JL_SIGNAL( int, float, char, const char*, int, float, char, const char* ) Sig8( & oSignalPool );
+    JL_SIGNAL() Sig0;
+    JL_SIGNAL( int ) Sig1;
+    JL_SIGNAL( int, float ) Sig2;
+    JL_SIGNAL( int, float, char ) Sig3;
+    JL_SIGNAL( int, float, char, const char* ) Sig4;
+    JL_SIGNAL( int, float, char, const char*, int ) Sig5;
+    JL_SIGNAL( int, float, char, const char*, int, float ) Sig6;
+    JL_SIGNAL( int, float, char, const char*, int, float, char ) Sig7;
+    JL_SIGNAL( int, float, char, const char*, int, float, char, const char* ) Sig8;
     
     const SignalBase* const ppSignalsByArity[] = {
         & Sig0, & Sig1, & Sig2, & Sig3, & Sig4, & Sig5, & Sig6, & Sig7, & Sig8
@@ -236,9 +239,7 @@ void SignalTest()
     printf( "Connection non-const instance methods to signals...\n" );
     
     for ( int i = 0; i < JL_ARRAY_SIZE(pObservers); ++i )
-    {
-        pObservers[i].SetSlotConnectionAllocator( & oSlotPool );
-        
+    {      
         Sig0.Connect( & pObservers[i], & TestObserver::M0 );
         Sig1.Connect( & pObservers[i], & TestObserver::M1 );
         

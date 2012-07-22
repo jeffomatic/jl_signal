@@ -73,8 +73,7 @@ public:
     unsigned CountConnections() const { return m_oConnections.Count(); }
     
     // Connects non-instance functions.
-    template< typename Unused >
-    void Connect( Unused (*fpFunction)(void) )
+    void Connect( void (*fpFunction)(void) )
     {
         JL_SIGNAL_DOUBLE_CONNECTED_FUNCTION_ASSERT( fpFunction );
         JL_SIGNAL_LOG( "Signal %p connection to non-instance function %p", this, BruteForceCast<void*>(fpFunction) );
@@ -85,8 +84,8 @@ public:
     }    
     
     // Connects instance methods. Class X should be equal to Y, or an ancestor type.
-    template< class X, class Y, typename Unused >
-    void Connect( Y* pObject, Unused (X::*fpMethod)(void) )
+    template< class X, class Y >
+    void Connect( Y* pObject, void (X::*fpMethod)(void) )
     {
         if ( ! pObject )
         {
@@ -104,8 +103,8 @@ public:
     }
     
     // Connects const instance methods. Class X should be equal to Y, or an ancestor type.
-    template< class X, class Y, typename Unused >
-    void Connect( Y* pObject, Unused (X::*fpMethod)(void) const )
+    template< class X, class Y >
+    void Connect( Y* pObject, void (X::*fpMethod)(void) const )
     {
         if ( ! pObject )
         {
@@ -123,22 +122,21 @@ public:
     }
     
     // Returns true if the given observer and non-instance function are connected to this signal.
-    template< typename Unused >
-    bool IsConnected( Unused (*fpFunction)(void) ) const
+    bool IsConnected( void (*fpFunction)(void) ) const
     {
         return IsConnected( Delegate(fpFunction) );
     }    
     
     // Returns true if the given observer and instance method are connected to this signal.
-    template< class X, class Y, typename Unused >
-    bool IsConnected( Y* pObject, Unused (X::*fpMethod)(void) ) const
+    template< class X, class Y >
+    bool IsConnected( Y* pObject, void (X::*fpMethod)(void) ) const
     {
         return IsConnected( Delegate(pObject, fpMethod) );
     }
     
     // Returns true if the given observer and const instance method are connected to this signal.
-    template< class X, class Y, typename Unused >
-    bool IsConnected( Y* pObject, Unused (X::*fpMethod)(void) const ) const
+    template< class X, class Y >
+    bool IsConnected( Y* pObject, void (X::*fpMethod)(void) const ) const
     {
         return IsConnected( Delegate(pObject, fpMethod) );
     }
@@ -154,8 +152,7 @@ public:
     void operator()( void ) const { Emit(); }
     
     // Disconnects a non-instance method.
-    template< typename Unused >
-    void Disconnect( Unused (*fpFunction)(void) )
+    void Disconnect( void (*fpFunction)(void) )
     {
         Delegate test( fpFunction );
         
@@ -306,8 +303,7 @@ public:
     unsigned CountConnections() const { return m_oConnections.Count(); }
     
     // Connects non-instance functions.
-    template< typename Unused >
-    void Connect( Unused (*fpFunction)(_P1) )
+    void Connect( void (*fpFunction)(_P1) )
     {
         JL_SIGNAL_DOUBLE_CONNECTED_FUNCTION_ASSERT( fpFunction );
         JL_SIGNAL_LOG( "Signal %p connection to non-instance function %p", this, BruteForceCast<void*>(fpFunction) );
@@ -318,8 +314,8 @@ public:
     }    
     
     // Connects instance methods. Class X should be equal to Y, or an ancestor type.
-    template< class X, class Y, typename Unused >
-    void Connect( Y* pObject, Unused (X::*fpMethod)(_P1) )
+    template< class X, class Y >
+    void Connect( Y* pObject, void (X::*fpMethod)(_P1) )
     {
         if ( ! pObject )
         {
@@ -337,8 +333,8 @@ public:
     }
     
     // Connects const instance methods. Class X should be equal to Y, or an ancestor type.
-    template< class X, class Y, typename Unused >
-    void Connect( Y* pObject, Unused (X::*fpMethod)(_P1) const )
+    template< class X, class Y >
+    void Connect( Y* pObject, void (X::*fpMethod)(_P1) const )
     {
         if ( ! pObject )
         {
@@ -356,22 +352,21 @@ public:
     }
     
     // Returns true if the given observer and non-instance function are connected to this signal.
-    template< typename Unused >
-    bool IsConnected( Unused (*fpFunction)(_P1) ) const
+    bool IsConnected( void (*fpFunction)(_P1) ) const
     {
         return IsConnected( Delegate(fpFunction) );
     }    
     
     // Returns true if the given observer and instance method are connected to this signal.
-    template< class X, class Y, typename Unused >
-    bool IsConnected( Y* pObject, Unused (X::*fpMethod)(_P1) ) const
+    template< class X, class Y >
+    bool IsConnected( Y* pObject, void (X::*fpMethod)(_P1) ) const
     {
         return IsConnected( Delegate(pObject, fpMethod) );
     }
     
     // Returns true if the given observer and const instance method are connected to this signal.
-    template< class X, class Y, typename Unused >
-    bool IsConnected( Y* pObject, Unused (X::*fpMethod)(_P1) const ) const
+    template< class X, class Y >
+    bool IsConnected( Y* pObject, void (X::*fpMethod)(_P1) const ) const
     {
         return IsConnected( Delegate(pObject, fpMethod) );
     }
@@ -387,8 +382,7 @@ public:
     void operator()( _P1 p1 ) const { Emit( p1 ); }
     
     // Disconnects a non-instance method.
-    template< typename Unused >
-    void Disconnect( Unused (*fpFunction)(_P1) )
+    void Disconnect( void (*fpFunction)(_P1) )
     {
         Delegate test( fpFunction );
         
@@ -539,8 +533,7 @@ public:
     unsigned CountConnections() const { return m_oConnections.Count(); }
     
     // Connects non-instance functions.
-    template< typename Unused >
-    void Connect( Unused (*fpFunction)(_P1, _P2) )
+    void Connect( void (*fpFunction)(_P1, _P2) )
     {
         JL_SIGNAL_DOUBLE_CONNECTED_FUNCTION_ASSERT( fpFunction );
         JL_SIGNAL_LOG( "Signal %p connection to non-instance function %p", this, BruteForceCast<void*>(fpFunction) );
@@ -551,8 +544,8 @@ public:
     }    
     
     // Connects instance methods. Class X should be equal to Y, or an ancestor type.
-    template< class X, class Y, typename Unused >
-    void Connect( Y* pObject, Unused (X::*fpMethod)(_P1, _P2) )
+    template< class X, class Y >
+    void Connect( Y* pObject, void (X::*fpMethod)(_P1, _P2) )
     {
         if ( ! pObject )
         {
@@ -570,8 +563,8 @@ public:
     }
     
     // Connects const instance methods. Class X should be equal to Y, or an ancestor type.
-    template< class X, class Y, typename Unused >
-    void Connect( Y* pObject, Unused (X::*fpMethod)(_P1, _P2) const )
+    template< class X, class Y >
+    void Connect( Y* pObject, void (X::*fpMethod)(_P1, _P2) const )
     {
         if ( ! pObject )
         {
@@ -589,22 +582,21 @@ public:
     }
     
     // Returns true if the given observer and non-instance function are connected to this signal.
-    template< typename Unused >
-    bool IsConnected( Unused (*fpFunction)(_P1, _P2) ) const
+    bool IsConnected( void (*fpFunction)(_P1, _P2) ) const
     {
         return IsConnected( Delegate(fpFunction) );
     }    
     
     // Returns true if the given observer and instance method are connected to this signal.
-    template< class X, class Y, typename Unused >
-    bool IsConnected( Y* pObject, Unused (X::*fpMethod)(_P1, _P2) ) const
+    template< class X, class Y >
+    bool IsConnected( Y* pObject, void (X::*fpMethod)(_P1, _P2) ) const
     {
         return IsConnected( Delegate(pObject, fpMethod) );
     }
     
     // Returns true if the given observer and const instance method are connected to this signal.
-    template< class X, class Y, typename Unused >
-    bool IsConnected( Y* pObject, Unused (X::*fpMethod)(_P1, _P2) const ) const
+    template< class X, class Y >
+    bool IsConnected( Y* pObject, void (X::*fpMethod)(_P1, _P2) const ) const
     {
         return IsConnected( Delegate(pObject, fpMethod) );
     }
@@ -620,8 +612,7 @@ public:
     void operator()( _P1 p1, _P2 p2 ) const { Emit( p1, p2 ); }
     
     // Disconnects a non-instance method.
-    template< typename Unused >
-    void Disconnect( Unused (*fpFunction)(_P1, _P2) )
+    void Disconnect( void (*fpFunction)(_P1, _P2) )
     {
         Delegate test( fpFunction );
         
@@ -772,8 +763,7 @@ public:
     unsigned CountConnections() const { return m_oConnections.Count(); }
     
     // Connects non-instance functions.
-    template< typename Unused >
-    void Connect( Unused (*fpFunction)(_P1, _P2, _P3) )
+    void Connect( void (*fpFunction)(_P1, _P2, _P3) )
     {
         JL_SIGNAL_DOUBLE_CONNECTED_FUNCTION_ASSERT( fpFunction );
         JL_SIGNAL_LOG( "Signal %p connection to non-instance function %p", this, BruteForceCast<void*>(fpFunction) );
@@ -784,8 +774,8 @@ public:
     }    
     
     // Connects instance methods. Class X should be equal to Y, or an ancestor type.
-    template< class X, class Y, typename Unused >
-    void Connect( Y* pObject, Unused (X::*fpMethod)(_P1, _P2, _P3) )
+    template< class X, class Y >
+    void Connect( Y* pObject, void (X::*fpMethod)(_P1, _P2, _P3) )
     {
         if ( ! pObject )
         {
@@ -803,8 +793,8 @@ public:
     }
     
     // Connects const instance methods. Class X should be equal to Y, or an ancestor type.
-    template< class X, class Y, typename Unused >
-    void Connect( Y* pObject, Unused (X::*fpMethod)(_P1, _P2, _P3) const )
+    template< class X, class Y >
+    void Connect( Y* pObject, void (X::*fpMethod)(_P1, _P2, _P3) const )
     {
         if ( ! pObject )
         {
@@ -822,22 +812,21 @@ public:
     }
     
     // Returns true if the given observer and non-instance function are connected to this signal.
-    template< typename Unused >
-    bool IsConnected( Unused (*fpFunction)(_P1, _P2, _P3) ) const
+    bool IsConnected( void (*fpFunction)(_P1, _P2, _P3) ) const
     {
         return IsConnected( Delegate(fpFunction) );
     }    
     
     // Returns true if the given observer and instance method are connected to this signal.
-    template< class X, class Y, typename Unused >
-    bool IsConnected( Y* pObject, Unused (X::*fpMethod)(_P1, _P2, _P3) ) const
+    template< class X, class Y >
+    bool IsConnected( Y* pObject, void (X::*fpMethod)(_P1, _P2, _P3) ) const
     {
         return IsConnected( Delegate(pObject, fpMethod) );
     }
     
     // Returns true if the given observer and const instance method are connected to this signal.
-    template< class X, class Y, typename Unused >
-    bool IsConnected( Y* pObject, Unused (X::*fpMethod)(_P1, _P2, _P3) const ) const
+    template< class X, class Y >
+    bool IsConnected( Y* pObject, void (X::*fpMethod)(_P1, _P2, _P3) const ) const
     {
         return IsConnected( Delegate(pObject, fpMethod) );
     }
@@ -853,8 +842,7 @@ public:
     void operator()( _P1 p1, _P2 p2, _P3 p3 ) const { Emit( p1, p2, p3 ); }
     
     // Disconnects a non-instance method.
-    template< typename Unused >
-    void Disconnect( Unused (*fpFunction)(_P1, _P2, _P3) )
+    void Disconnect( void (*fpFunction)(_P1, _P2, _P3) )
     {
         Delegate test( fpFunction );
         
@@ -1005,8 +993,7 @@ public:
     unsigned CountConnections() const { return m_oConnections.Count(); }
     
     // Connects non-instance functions.
-    template< typename Unused >
-    void Connect( Unused (*fpFunction)(_P1, _P2, _P3, _P4) )
+    void Connect( void (*fpFunction)(_P1, _P2, _P3, _P4) )
     {
         JL_SIGNAL_DOUBLE_CONNECTED_FUNCTION_ASSERT( fpFunction );
         JL_SIGNAL_LOG( "Signal %p connection to non-instance function %p", this, BruteForceCast<void*>(fpFunction) );
@@ -1017,8 +1004,8 @@ public:
     }    
     
     // Connects instance methods. Class X should be equal to Y, or an ancestor type.
-    template< class X, class Y, typename Unused >
-    void Connect( Y* pObject, Unused (X::*fpMethod)(_P1, _P2, _P3, _P4) )
+    template< class X, class Y >
+    void Connect( Y* pObject, void (X::*fpMethod)(_P1, _P2, _P3, _P4) )
     {
         if ( ! pObject )
         {
@@ -1036,8 +1023,8 @@ public:
     }
     
     // Connects const instance methods. Class X should be equal to Y, or an ancestor type.
-    template< class X, class Y, typename Unused >
-    void Connect( Y* pObject, Unused (X::*fpMethod)(_P1, _P2, _P3, _P4) const )
+    template< class X, class Y >
+    void Connect( Y* pObject, void (X::*fpMethod)(_P1, _P2, _P3, _P4) const )
     {
         if ( ! pObject )
         {
@@ -1055,22 +1042,21 @@ public:
     }
     
     // Returns true if the given observer and non-instance function are connected to this signal.
-    template< typename Unused >
-    bool IsConnected( Unused (*fpFunction)(_P1, _P2, _P3, _P4) ) const
+    bool IsConnected( void (*fpFunction)(_P1, _P2, _P3, _P4) ) const
     {
         return IsConnected( Delegate(fpFunction) );
     }    
     
     // Returns true if the given observer and instance method are connected to this signal.
-    template< class X, class Y, typename Unused >
-    bool IsConnected( Y* pObject, Unused (X::*fpMethod)(_P1, _P2, _P3, _P4) ) const
+    template< class X, class Y >
+    bool IsConnected( Y* pObject, void (X::*fpMethod)(_P1, _P2, _P3, _P4) ) const
     {
         return IsConnected( Delegate(pObject, fpMethod) );
     }
     
     // Returns true if the given observer and const instance method are connected to this signal.
-    template< class X, class Y, typename Unused >
-    bool IsConnected( Y* pObject, Unused (X::*fpMethod)(_P1, _P2, _P3, _P4) const ) const
+    template< class X, class Y >
+    bool IsConnected( Y* pObject, void (X::*fpMethod)(_P1, _P2, _P3, _P4) const ) const
     {
         return IsConnected( Delegate(pObject, fpMethod) );
     }
@@ -1086,8 +1072,7 @@ public:
     void operator()( _P1 p1, _P2 p2, _P3 p3, _P4 p4 ) const { Emit( p1, p2, p3, p4 ); }
     
     // Disconnects a non-instance method.
-    template< typename Unused >
-    void Disconnect( Unused (*fpFunction)(_P1, _P2, _P3, _P4) )
+    void Disconnect( void (*fpFunction)(_P1, _P2, _P3, _P4) )
     {
         Delegate test( fpFunction );
         
@@ -1238,8 +1223,7 @@ public:
     unsigned CountConnections() const { return m_oConnections.Count(); }
     
     // Connects non-instance functions.
-    template< typename Unused >
-    void Connect( Unused (*fpFunction)(_P1, _P2, _P3, _P4, _P5) )
+    void Connect( void (*fpFunction)(_P1, _P2, _P3, _P4, _P5) )
     {
         JL_SIGNAL_DOUBLE_CONNECTED_FUNCTION_ASSERT( fpFunction );
         JL_SIGNAL_LOG( "Signal %p connection to non-instance function %p", this, BruteForceCast<void*>(fpFunction) );
@@ -1250,8 +1234,8 @@ public:
     }    
     
     // Connects instance methods. Class X should be equal to Y, or an ancestor type.
-    template< class X, class Y, typename Unused >
-    void Connect( Y* pObject, Unused (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5) )
+    template< class X, class Y >
+    void Connect( Y* pObject, void (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5) )
     {
         if ( ! pObject )
         {
@@ -1269,8 +1253,8 @@ public:
     }
     
     // Connects const instance methods. Class X should be equal to Y, or an ancestor type.
-    template< class X, class Y, typename Unused >
-    void Connect( Y* pObject, Unused (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5) const )
+    template< class X, class Y >
+    void Connect( Y* pObject, void (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5) const )
     {
         if ( ! pObject )
         {
@@ -1288,22 +1272,21 @@ public:
     }
     
     // Returns true if the given observer and non-instance function are connected to this signal.
-    template< typename Unused >
-    bool IsConnected( Unused (*fpFunction)(_P1, _P2, _P3, _P4, _P5) ) const
+    bool IsConnected( void (*fpFunction)(_P1, _P2, _P3, _P4, _P5) ) const
     {
         return IsConnected( Delegate(fpFunction) );
     }    
     
     // Returns true if the given observer and instance method are connected to this signal.
-    template< class X, class Y, typename Unused >
-    bool IsConnected( Y* pObject, Unused (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5) ) const
+    template< class X, class Y >
+    bool IsConnected( Y* pObject, void (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5) ) const
     {
         return IsConnected( Delegate(pObject, fpMethod) );
     }
     
     // Returns true if the given observer and const instance method are connected to this signal.
-    template< class X, class Y, typename Unused >
-    bool IsConnected( Y* pObject, Unused (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5) const ) const
+    template< class X, class Y >
+    bool IsConnected( Y* pObject, void (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5) const ) const
     {
         return IsConnected( Delegate(pObject, fpMethod) );
     }
@@ -1319,8 +1302,7 @@ public:
     void operator()( _P1 p1, _P2 p2, _P3 p3, _P4 p4, _P5 p5 ) const { Emit( p1, p2, p3, p4, p5 ); }
     
     // Disconnects a non-instance method.
-    template< typename Unused >
-    void Disconnect( Unused (*fpFunction)(_P1, _P2, _P3, _P4, _P5) )
+    void Disconnect( void (*fpFunction)(_P1, _P2, _P3, _P4, _P5) )
     {
         Delegate test( fpFunction );
         
@@ -1471,8 +1453,7 @@ public:
     unsigned CountConnections() const { return m_oConnections.Count(); }
     
     // Connects non-instance functions.
-    template< typename Unused >
-    void Connect( Unused (*fpFunction)(_P1, _P2, _P3, _P4, _P5, _P6) )
+    void Connect( void (*fpFunction)(_P1, _P2, _P3, _P4, _P5, _P6) )
     {
         JL_SIGNAL_DOUBLE_CONNECTED_FUNCTION_ASSERT( fpFunction );
         JL_SIGNAL_LOG( "Signal %p connection to non-instance function %p", this, BruteForceCast<void*>(fpFunction) );
@@ -1483,8 +1464,8 @@ public:
     }    
     
     // Connects instance methods. Class X should be equal to Y, or an ancestor type.
-    template< class X, class Y, typename Unused >
-    void Connect( Y* pObject, Unused (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5, _P6) )
+    template< class X, class Y >
+    void Connect( Y* pObject, void (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5, _P6) )
     {
         if ( ! pObject )
         {
@@ -1502,8 +1483,8 @@ public:
     }
     
     // Connects const instance methods. Class X should be equal to Y, or an ancestor type.
-    template< class X, class Y, typename Unused >
-    void Connect( Y* pObject, Unused (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5, _P6) const )
+    template< class X, class Y >
+    void Connect( Y* pObject, void (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5, _P6) const )
     {
         if ( ! pObject )
         {
@@ -1521,22 +1502,21 @@ public:
     }
     
     // Returns true if the given observer and non-instance function are connected to this signal.
-    template< typename Unused >
-    bool IsConnected( Unused (*fpFunction)(_P1, _P2, _P3, _P4, _P5, _P6) ) const
+    bool IsConnected( void (*fpFunction)(_P1, _P2, _P3, _P4, _P5, _P6) ) const
     {
         return IsConnected( Delegate(fpFunction) );
     }    
     
     // Returns true if the given observer and instance method are connected to this signal.
-    template< class X, class Y, typename Unused >
-    bool IsConnected( Y* pObject, Unused (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5, _P6) ) const
+    template< class X, class Y >
+    bool IsConnected( Y* pObject, void (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5, _P6) ) const
     {
         return IsConnected( Delegate(pObject, fpMethod) );
     }
     
     // Returns true if the given observer and const instance method are connected to this signal.
-    template< class X, class Y, typename Unused >
-    bool IsConnected( Y* pObject, Unused (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5, _P6) const ) const
+    template< class X, class Y >
+    bool IsConnected( Y* pObject, void (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5, _P6) const ) const
     {
         return IsConnected( Delegate(pObject, fpMethod) );
     }
@@ -1552,8 +1532,7 @@ public:
     void operator()( _P1 p1, _P2 p2, _P3 p3, _P4 p4, _P5 p5, _P6 p6 ) const { Emit( p1, p2, p3, p4, p5, p6 ); }
     
     // Disconnects a non-instance method.
-    template< typename Unused >
-    void Disconnect( Unused (*fpFunction)(_P1, _P2, _P3, _P4, _P5, _P6) )
+    void Disconnect( void (*fpFunction)(_P1, _P2, _P3, _P4, _P5, _P6) )
     {
         Delegate test( fpFunction );
         
@@ -1704,8 +1683,7 @@ public:
     unsigned CountConnections() const { return m_oConnections.Count(); }
     
     // Connects non-instance functions.
-    template< typename Unused >
-    void Connect( Unused (*fpFunction)(_P1, _P2, _P3, _P4, _P5, _P6, _P7) )
+    void Connect( void (*fpFunction)(_P1, _P2, _P3, _P4, _P5, _P6, _P7) )
     {
         JL_SIGNAL_DOUBLE_CONNECTED_FUNCTION_ASSERT( fpFunction );
         JL_SIGNAL_LOG( "Signal %p connection to non-instance function %p", this, BruteForceCast<void*>(fpFunction) );
@@ -1716,8 +1694,8 @@ public:
     }    
     
     // Connects instance methods. Class X should be equal to Y, or an ancestor type.
-    template< class X, class Y, typename Unused >
-    void Connect( Y* pObject, Unused (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5, _P6, _P7) )
+    template< class X, class Y >
+    void Connect( Y* pObject, void (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5, _P6, _P7) )
     {
         if ( ! pObject )
         {
@@ -1735,8 +1713,8 @@ public:
     }
     
     // Connects const instance methods. Class X should be equal to Y, or an ancestor type.
-    template< class X, class Y, typename Unused >
-    void Connect( Y* pObject, Unused (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5, _P6, _P7) const )
+    template< class X, class Y >
+    void Connect( Y* pObject, void (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5, _P6, _P7) const )
     {
         if ( ! pObject )
         {
@@ -1754,22 +1732,21 @@ public:
     }
     
     // Returns true if the given observer and non-instance function are connected to this signal.
-    template< typename Unused >
-    bool IsConnected( Unused (*fpFunction)(_P1, _P2, _P3, _P4, _P5, _P6, _P7) ) const
+    bool IsConnected( void (*fpFunction)(_P1, _P2, _P3, _P4, _P5, _P6, _P7) ) const
     {
         return IsConnected( Delegate(fpFunction) );
     }    
     
     // Returns true if the given observer and instance method are connected to this signal.
-    template< class X, class Y, typename Unused >
-    bool IsConnected( Y* pObject, Unused (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5, _P6, _P7) ) const
+    template< class X, class Y >
+    bool IsConnected( Y* pObject, void (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5, _P6, _P7) ) const
     {
         return IsConnected( Delegate(pObject, fpMethod) );
     }
     
     // Returns true if the given observer and const instance method are connected to this signal.
-    template< class X, class Y, typename Unused >
-    bool IsConnected( Y* pObject, Unused (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5, _P6, _P7) const ) const
+    template< class X, class Y >
+    bool IsConnected( Y* pObject, void (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5, _P6, _P7) const ) const
     {
         return IsConnected( Delegate(pObject, fpMethod) );
     }
@@ -1785,8 +1762,7 @@ public:
     void operator()( _P1 p1, _P2 p2, _P3 p3, _P4 p4, _P5 p5, _P6 p6, _P7 p7 ) const { Emit( p1, p2, p3, p4, p5, p6, p7 ); }
     
     // Disconnects a non-instance method.
-    template< typename Unused >
-    void Disconnect( Unused (*fpFunction)(_P1, _P2, _P3, _P4, _P5, _P6, _P7) )
+    void Disconnect( void (*fpFunction)(_P1, _P2, _P3, _P4, _P5, _P6, _P7) )
     {
         Delegate test( fpFunction );
         
@@ -1937,8 +1913,7 @@ public:
     unsigned CountConnections() const { return m_oConnections.Count(); }
     
     // Connects non-instance functions.
-    template< typename Unused >
-    void Connect( Unused (*fpFunction)(_P1, _P2, _P3, _P4, _P5, _P6, _P7, _P8) )
+    void Connect( void (*fpFunction)(_P1, _P2, _P3, _P4, _P5, _P6, _P7, _P8) )
     {
         JL_SIGNAL_DOUBLE_CONNECTED_FUNCTION_ASSERT( fpFunction );
         JL_SIGNAL_LOG( "Signal %p connection to non-instance function %p", this, BruteForceCast<void*>(fpFunction) );
@@ -1949,8 +1924,8 @@ public:
     }    
     
     // Connects instance methods. Class X should be equal to Y, or an ancestor type.
-    template< class X, class Y, typename Unused >
-    void Connect( Y* pObject, Unused (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5, _P6, _P7, _P8) )
+    template< class X, class Y >
+    void Connect( Y* pObject, void (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5, _P6, _P7, _P8) )
     {
         if ( ! pObject )
         {
@@ -1968,8 +1943,8 @@ public:
     }
     
     // Connects const instance methods. Class X should be equal to Y, or an ancestor type.
-    template< class X, class Y, typename Unused >
-    void Connect( Y* pObject, Unused (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5, _P6, _P7, _P8) const )
+    template< class X, class Y >
+    void Connect( Y* pObject, void (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5, _P6, _P7, _P8) const )
     {
         if ( ! pObject )
         {
@@ -1987,22 +1962,21 @@ public:
     }
     
     // Returns true if the given observer and non-instance function are connected to this signal.
-    template< typename Unused >
-    bool IsConnected( Unused (*fpFunction)(_P1, _P2, _P3, _P4, _P5, _P6, _P7, _P8) ) const
+    bool IsConnected( void (*fpFunction)(_P1, _P2, _P3, _P4, _P5, _P6, _P7, _P8) ) const
     {
         return IsConnected( Delegate(fpFunction) );
     }    
     
     // Returns true if the given observer and instance method are connected to this signal.
-    template< class X, class Y, typename Unused >
-    bool IsConnected( Y* pObject, Unused (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5, _P6, _P7, _P8) ) const
+    template< class X, class Y >
+    bool IsConnected( Y* pObject, void (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5, _P6, _P7, _P8) ) const
     {
         return IsConnected( Delegate(pObject, fpMethod) );
     }
     
     // Returns true if the given observer and const instance method are connected to this signal.
-    template< class X, class Y, typename Unused >
-    bool IsConnected( Y* pObject, Unused (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5, _P6, _P7, _P8) const ) const
+    template< class X, class Y >
+    bool IsConnected( Y* pObject, void (X::*fpMethod)(_P1, _P2, _P3, _P4, _P5, _P6, _P7, _P8) const ) const
     {
         return IsConnected( Delegate(pObject, fpMethod) );
     }
@@ -2018,8 +1992,7 @@ public:
     void operator()( _P1 p1, _P2 p2, _P3 p3, _P4 p4, _P5 p5, _P6 p6, _P7 p7, _P8 p8 ) const { Emit( p1, p2, p3, p4, p5, p6, p7, p8 ); }
     
     // Disconnects a non-instance method.
-    template< typename Unused >
-    void Disconnect( Unused (*fpFunction)(_P1, _P2, _P3, _P4, _P5, _P6, _P7, _P8) )
+    void Disconnect( void (*fpFunction)(_P1, _P2, _P3, _P4, _P5, _P6, _P7, _P8) )
     {
         Delegate test( fpFunction );
         

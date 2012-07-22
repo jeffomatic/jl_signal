@@ -19,14 +19,14 @@ public:
     void DisconnectAllSignals();
     void DisconnectSignal( SignalBase* pSignal );
     
-    void SetSlotConnectionAllocator( ScopedAllocator* pAllocator ) { m_oSignals.Init( pAllocator ); }
+    void SetConnectionAllocator( ScopedAllocator* pAllocator ) { m_oSignals.Init( pAllocator ); }
     unsigned CountSignalConnections() const { return m_oSignals.Count(); }
     
     // Interface for child classes
 protected:
     // Disallow instances of this class
-    SignalObserver() { SetSlotConnectionAllocator( s_pCommonAllocator ); }
-    SignalObserver( ScopedAllocator* pAllocator ) { SetSlotConnectionAllocator( pAllocator ); }
+    SignalObserver() { SetConnectionAllocator( s_pCommonAllocator ); }
+    SignalObserver( ScopedAllocator* pAllocator ) { SetConnectionAllocator( pAllocator ); }
     
     // Hmm, a bit of a hack, but if a derived type caches pointers to signals,
     // we may need this
@@ -49,7 +49,7 @@ private:
     
     // Global allocator
 public:
-    static void SetCommonAllocator( ScopedAllocator* pAllocator ) { s_pCommonAllocator = pAllocator; }
+    static void SetCommonConnectionAllocator( ScopedAllocator* pAllocator ) { s_pCommonAllocator = pAllocator; }
     
 private:
     static ScopedAllocator* s_pCommonAllocator;
@@ -77,7 +77,7 @@ private:
     
     // Global allocator
 public:
-    static void SetCommonAllocator( ScopedAllocator* pAllocator ) { s_pCommonAllocator = pAllocator; }
+    static void SetCommonConnectionAllocator( ScopedAllocator* pAllocator ) { s_pCommonAllocator = pAllocator; }
     
 protected:
     static ScopedAllocator* s_pCommonAllocator;
