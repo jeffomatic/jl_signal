@@ -223,7 +223,7 @@ Note that by default, there is nothing stopping you from connecting the same fun
 
 To connect a class's instance methods to a signal, you must derive the class from `jl::SignalObserver`. This guarantees that connections will be broken between signals and connected objects that have gone out of scope.
 
-As with non-instance functions, instance methods that connect to a signal must have a `void` return type. Both `const` and non-`const` instance methods may be connected to the same signal.
+As with non-instance functions, instance methods that connect to a signal must have a `void` return type. Signals do not discriminate over constness, so both `const` and non-`const` instance methods may be connected to the same signal.
 
 ```c++
 JL_SIGNAL( int, float, const char* ) oSignal;
@@ -311,7 +311,7 @@ class MallocAllocator : public jl::ScopedAllocator
 {
 public:
     virtual void* Alloc( size_t nBytes ) { malloc( nBytes ); }
-    virtual void Free( void* pObject ) { free( nBytes ); }
+    virtual void Free( void* pObject ) { free( pObject ); }
 };
 
 MallocAllocator g_oMallocAllocator;
