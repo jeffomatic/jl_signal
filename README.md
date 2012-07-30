@@ -291,10 +291,10 @@ public:
 Foo oFoo;
 oSignal.Connect( &oFoo, &Foo::Bar );
 
-// Disconnect instance metho
+// Disconnect instance method
 oSignal.Disconnect( &oFoo, &Foo::Bar );
 
-// Disconnect observer
+// Disconnect all instance methods for an observer
 oSignal.Disconnect( &oFoo );
 
 // Disconnect all connected functions and observers
@@ -383,7 +383,7 @@ I've used this library and/or similar protoypes with the following compilers:
 - Visual C++ 9
 - SNC Compiler
 
-Most incompatibility issues arise from the fact that [FastDelegate](http://www.codeproject.com/Articles/7150/Member-Function-Pointers-and-the-Fastest-Possible) employs some clever but non-standard hackery to store function pointers in generic structures. It's worth noting that LLVM/clang support isn't documented (indeed, the library was released at least two years before clang), but it seems to work in my admittedly-limited test cases.
+Most incompatibility issues arise from the fact that [FastDelegate](http://www.codeproject.com/Articles/7150/Member-Function-Pointers-and-the-Fastest-Possible) employs some clever but non-standard hackery to store function pointers in generic structures. It's worth noting that LLVM/clang support isn't documented (indeed, the library was released at least two years before clang), but it seems to work in my admittedly-limited test cases. In general, compiler incompatibility with FastDelegate is very rare.
 
 ### License
 
