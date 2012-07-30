@@ -291,14 +291,15 @@ public:
 Foo oFoo;
 oSignal.Connect( &oFoo, &Foo::Bar );
 
+// Disconnect instance metho
+oSignal.Disconnect( &oFoo, &Foo::Bar );
+
 // Disconnect observer
 oSignal.Disconnect( &oFoo );
 
 // Disconnect all connected functions and observers
 oSignal.DisconnectAll();
 ```
-
-It's important to note that the current API only allows disconnection of _observers_, not observer/instance method pairs. Thus, if an observer is connected more than once to a signal (which is entirely legal), you must break all connections at the same time.
 
 ### Customized allocation schemes
 
