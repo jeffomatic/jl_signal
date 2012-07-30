@@ -40,7 +40,7 @@
 		3752E27615B8F64E005B47D7 /* SignalBase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SignalBase.cpp; path = ../../../src/SignalBase.cpp; sourceTree = "<group>"; };
 		3752E27715B8F64E005B47D7 /* SignalBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SignalBase.h; path = ../../../src/SignalBase.h; sourceTree = "<group>"; };
 		3752E27815B8F64E005B47D7 /* StaticSignalConnectionAllocators.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = StaticSignalConnectionAllocators.h; path = ../../../src/StaticSignalConnectionAllocators.h; sourceTree = "<group>"; };
-		3752E27915B8F64E005B47D7 /* SignalDefinitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = SignalDefinitions.h; path = ../../../src/SignalDefinitions.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		3752E27915B8F64E005B47D7 /* SignalDefinitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = SignalDefinitions.h; path = ../../../src/SignalDefinitions.h; sourceTree = "<group>"; };
 		3752E27A15B8F64E005B47D7 /* SignalTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SignalTest.cpp; path = ../../../src/SignalTest.cpp; sourceTree = "<group>"; };
 		3752E27B15B8F64E005B47D7 /* testMain.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = testMain.cpp; path = ../../../src/testMain.cpp; sourceTree = "<group>"; };
 		3752E27C15B8F64E005B47D7 /* Utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Utils.h; path = ../../../src/Utils.h; sourceTree = "<group>"; };
