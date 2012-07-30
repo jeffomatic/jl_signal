@@ -148,7 +148,6 @@ public:
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
         JL_SIGNAL_LOG( "Signal<%= arg_count %> %p removing connections to Observer %p, instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );        
         DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
-
     }
     
     // Disconnects const instance methods. Class X should be equal to Y, or an ancestor type.

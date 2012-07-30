@@ -184,7 +184,6 @@ public:
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
         JL_SIGNAL_LOG( "Signal0 %p removing connections to Observer %p, instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );        
         DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
-
     }
     
     // Disconnects const instance methods. Class X should be equal to Y, or an ancestor type.
@@ -488,7 +487,6 @@ public:
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
         JL_SIGNAL_LOG( "Signal1 %p removing connections to Observer %p, instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );        
         DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
-
     }
     
     // Disconnects const instance methods. Class X should be equal to Y, or an ancestor type.
@@ -792,7 +790,6 @@ public:
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
         JL_SIGNAL_LOG( "Signal2 %p removing connections to Observer %p, instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );        
         DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
-
     }
     
     // Disconnects const instance methods. Class X should be equal to Y, or an ancestor type.
@@ -1096,7 +1093,6 @@ public:
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
         JL_SIGNAL_LOG( "Signal3 %p removing connections to Observer %p, instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );        
         DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
-
     }
     
     // Disconnects const instance methods. Class X should be equal to Y, or an ancestor type.
@@ -1400,7 +1396,6 @@ public:
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
         JL_SIGNAL_LOG( "Signal4 %p removing connections to Observer %p, instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );        
         DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
-
     }
     
     // Disconnects const instance methods. Class X should be equal to Y, or an ancestor type.
@@ -1704,7 +1699,6 @@ public:
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
         JL_SIGNAL_LOG( "Signal5 %p removing connections to Observer %p, instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );        
         DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
-
     }
     
     // Disconnects const instance methods. Class X should be equal to Y, or an ancestor type.
@@ -2008,7 +2002,6 @@ public:
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
         JL_SIGNAL_LOG( "Signal6 %p removing connections to Observer %p, instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );        
         DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
-
     }
     
     // Disconnects const instance methods. Class X should be equal to Y, or an ancestor type.
@@ -2312,7 +2305,6 @@ public:
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
         JL_SIGNAL_LOG( "Signal7 %p removing connections to Observer %p, instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );        
         DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
-
     }
     
     // Disconnects const instance methods. Class X should be equal to Y, or an ancestor type.
@@ -2616,7 +2608,6 @@ public:
         SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
         JL_SIGNAL_LOG( "Signal8 %p removing connections to Observer %p, instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );        
         DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
-
     }
     
     // Disconnects const instance methods. Class X should be equal to Y, or an ancestor type.
