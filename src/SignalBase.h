@@ -67,7 +67,10 @@ protected:
     // Disallow instances of this class
     SignalBase() {}
     
+    // Called on any connection to the observer.
     void NotifyObserverConnect( SignalObserver* pObserver ) { pObserver->OnSignalConnect(this); }
+    
+    // Called when no more connections exist to the observer.
     void NotifyObserverDisconnect( SignalObserver* pObserver ) { pObserver->OnSignalDisconnect(this); }
     
     // Private interface (for SignalObserver)

@@ -154,8 +154,22 @@ public:
     // Disconnects a non-instance method.
     void Disconnect( void (*fpFunction)(void) )
     {
-        JL_SIGNAL_LOG( "Signal0 %p removing connections to non-instance method %p\n", this, BruteForceCast<void*>(fpFunction) );
-        Disconnect( Delegate(fpFunction) );
+        JL_SIGNAL_LOG( "Signal0 %p removing connections to non-instance method %p\n", this, BruteForceCast<void*>(fpFunction) );        
+        const Delegate d(fpFunction);
+        
+        for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
+        {
+            if ( (*i).d == d )
+            {
+                JL_ASSERT( (*i).pObserver == NULL );
+                JL_SIGNAL_LOG( "\tRemoving connection...\n" );
+                m_oConnections.Remove( i );
+            }
+            else
+            {
+                ++i;
+            }
+        }         
     }    
 
     // Disconnects instance methods. Class X should be equal to Y, or an ancestor type.
@@ -167,8 +181,10 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal0 %p removing connections to instance method (object %p, method %p)\n", this, pObject, BruteForceCast<void*>(fpMethod) );
-        Disconnect( Delegate(pObject, fpMethod) );
+        SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
+        JL_SIGNAL_LOG( "Signal0 %p removing connections to Observer %p, instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );        
+        DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
+
     }
     
     // Disconnects const instance methods. Class X should be equal to Y, or an ancestor type.
@@ -180,11 +196,13 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal0 %p removing connections to const instance method (object %p, method %p)\n", this, pObject, BruteForceCast<void*>(fpMethod) );
-        Disconnect( Delegate(pObject, fpMethod) );
+        SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
+        JL_SIGNAL_LOG( "Signal0 %p removing connections to Observer %p, const instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
+        DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
     }
     
-    // Disconnects all connected instance methods from a single observer    
+    // Disconnects all connected instance methods from a single observer. Calls NotifyObserverDisconnect()
+    // if any disconnections are made.
     void Disconnect( SignalObserver* pObserver )
     {
         if ( ! pObserver )
@@ -192,20 +210,26 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal0 %p removing connections to Observer %p\n", this, pObserver );
+        JL_SIGNAL_LOG( "Signal0 %p removing all connections to Observer %p\n", this, pObserver );
+        unsigned nDisconnections = 0;
+        
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
         {
             if ( (*i).pObserver == pObserver )
             {
                 JL_SIGNAL_LOG( "\tRemoving connection to observer\n" );
-                
-                m_oConnections.Remove( i );
-                NotifyObserverDisconnect( pObserver );
+                m_oConnections.Remove( i ); // advances iterator
+                ++nDisconnections;
             }
             else
             {
                 ++i;
             }
+        }
+        
+        if ( nDisconnections > 0 )
+        {
+            NotifyObserverDisconnect( pObserver );        
         }
     }
     
@@ -216,6 +240,10 @@ public:
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); ++i )
         {
             SignalObserver* pObserver = (*i).pObserver;
+            
+            //HACK - call this each time we encounter a valid observer pointer. This means
+            // this will be called repeatedly for observers that are connected multiple times
+            // to this signal.
             if ( pObserver )
             {
                 NotifyObserverDisconnect( pObserver );
@@ -239,19 +267,37 @@ private:
         return false;        
     }
     
-    void Disconnect( const Delegate& d )
+    // Disconnects a specific slot on an observer. Calls NotifyObserverDisconnect() if
+    // the observer is completely disconnected from this signal.
+    void DisconnectObserverDelegate( SignalObserver* pObserver, const Delegate& d )
     {
+        unsigned nDisconnections = 0; // number of disconnections. This is 0 or 1 unless you connected the same slot twice.
+        unsigned nObserverConnectionCount = 0; // number of times the observer is connected to this signal
+        
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
         {
             if ( (*i).d == d )
             {
-                JL_SIGNAL_LOG( "Removing connection...\n" );
-                m_oConnections.Remove( i );
+                JL_ASSERT( (*i).pObserver == pObserver );
+                JL_SIGNAL_LOG( "\tRemoving connection...\n" );
+                m_oConnections.Remove( i ); // advances iterator
+                ++nDisconnections;
             }
             else
             {
+                if ( (*i).pObserver == pObserver )
+                {
+                    ++nObserverConnectionCount;
+                }
+
                 ++i;
             }
+        }
+        
+        if ( nDisconnections > 0 && nObserverConnectionCount == 0 )
+        {
+            JL_SIGNAL_LOG( "\tCompletely disconnected observer %p!", pObserver );
+            NotifyObserverDisconnect( pObserver );
         }    
     }
     
@@ -412,8 +458,22 @@ public:
     // Disconnects a non-instance method.
     void Disconnect( void (*fpFunction)(_P1) )
     {
-        JL_SIGNAL_LOG( "Signal1 %p removing connections to non-instance method %p\n", this, BruteForceCast<void*>(fpFunction) );
-        Disconnect( Delegate(fpFunction) );
+        JL_SIGNAL_LOG( "Signal1 %p removing connections to non-instance method %p\n", this, BruteForceCast<void*>(fpFunction) );        
+        const Delegate d(fpFunction);
+        
+        for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
+        {
+            if ( (*i).d == d )
+            {
+                JL_ASSERT( (*i).pObserver == NULL );
+                JL_SIGNAL_LOG( "\tRemoving connection...\n" );
+                m_oConnections.Remove( i );
+            }
+            else
+            {
+                ++i;
+            }
+        }         
     }    
 
     // Disconnects instance methods. Class X should be equal to Y, or an ancestor type.
@@ -425,8 +485,10 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal1 %p removing connections to instance method (object %p, method %p)\n", this, pObject, BruteForceCast<void*>(fpMethod) );
-        Disconnect( Delegate(pObject, fpMethod) );
+        SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
+        JL_SIGNAL_LOG( "Signal1 %p removing connections to Observer %p, instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );        
+        DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
+
     }
     
     // Disconnects const instance methods. Class X should be equal to Y, or an ancestor type.
@@ -438,11 +500,13 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal1 %p removing connections to const instance method (object %p, method %p)\n", this, pObject, BruteForceCast<void*>(fpMethod) );
-        Disconnect( Delegate(pObject, fpMethod) );
+        SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
+        JL_SIGNAL_LOG( "Signal1 %p removing connections to Observer %p, const instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
+        DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
     }
     
-    // Disconnects all connected instance methods from a single observer    
+    // Disconnects all connected instance methods from a single observer. Calls NotifyObserverDisconnect()
+    // if any disconnections are made.
     void Disconnect( SignalObserver* pObserver )
     {
         if ( ! pObserver )
@@ -450,20 +514,26 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal1 %p removing connections to Observer %p\n", this, pObserver );
+        JL_SIGNAL_LOG( "Signal1 %p removing all connections to Observer %p\n", this, pObserver );
+        unsigned nDisconnections = 0;
+        
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
         {
             if ( (*i).pObserver == pObserver )
             {
                 JL_SIGNAL_LOG( "\tRemoving connection to observer\n" );
-                
-                m_oConnections.Remove( i );
-                NotifyObserverDisconnect( pObserver );
+                m_oConnections.Remove( i ); // advances iterator
+                ++nDisconnections;
             }
             else
             {
                 ++i;
             }
+        }
+        
+        if ( nDisconnections > 0 )
+        {
+            NotifyObserverDisconnect( pObserver );        
         }
     }
     
@@ -474,6 +544,10 @@ public:
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); ++i )
         {
             SignalObserver* pObserver = (*i).pObserver;
+            
+            //HACK - call this each time we encounter a valid observer pointer. This means
+            // this will be called repeatedly for observers that are connected multiple times
+            // to this signal.
             if ( pObserver )
             {
                 NotifyObserverDisconnect( pObserver );
@@ -497,19 +571,37 @@ private:
         return false;        
     }
     
-    void Disconnect( const Delegate& d )
+    // Disconnects a specific slot on an observer. Calls NotifyObserverDisconnect() if
+    // the observer is completely disconnected from this signal.
+    void DisconnectObserverDelegate( SignalObserver* pObserver, const Delegate& d )
     {
+        unsigned nDisconnections = 0; // number of disconnections. This is 0 or 1 unless you connected the same slot twice.
+        unsigned nObserverConnectionCount = 0; // number of times the observer is connected to this signal
+        
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
         {
             if ( (*i).d == d )
             {
-                JL_SIGNAL_LOG( "Removing connection...\n" );
-                m_oConnections.Remove( i );
+                JL_ASSERT( (*i).pObserver == pObserver );
+                JL_SIGNAL_LOG( "\tRemoving connection...\n" );
+                m_oConnections.Remove( i ); // advances iterator
+                ++nDisconnections;
             }
             else
             {
+                if ( (*i).pObserver == pObserver )
+                {
+                    ++nObserverConnectionCount;
+                }
+
                 ++i;
             }
+        }
+        
+        if ( nDisconnections > 0 && nObserverConnectionCount == 0 )
+        {
+            JL_SIGNAL_LOG( "\tCompletely disconnected observer %p!", pObserver );
+            NotifyObserverDisconnect( pObserver );
         }    
     }
     
@@ -670,8 +762,22 @@ public:
     // Disconnects a non-instance method.
     void Disconnect( void (*fpFunction)(_P1, _P2) )
     {
-        JL_SIGNAL_LOG( "Signal2 %p removing connections to non-instance method %p\n", this, BruteForceCast<void*>(fpFunction) );
-        Disconnect( Delegate(fpFunction) );
+        JL_SIGNAL_LOG( "Signal2 %p removing connections to non-instance method %p\n", this, BruteForceCast<void*>(fpFunction) );        
+        const Delegate d(fpFunction);
+        
+        for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
+        {
+            if ( (*i).d == d )
+            {
+                JL_ASSERT( (*i).pObserver == NULL );
+                JL_SIGNAL_LOG( "\tRemoving connection...\n" );
+                m_oConnections.Remove( i );
+            }
+            else
+            {
+                ++i;
+            }
+        }         
     }    
 
     // Disconnects instance methods. Class X should be equal to Y, or an ancestor type.
@@ -683,8 +789,10 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal2 %p removing connections to instance method (object %p, method %p)\n", this, pObject, BruteForceCast<void*>(fpMethod) );
-        Disconnect( Delegate(pObject, fpMethod) );
+        SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
+        JL_SIGNAL_LOG( "Signal2 %p removing connections to Observer %p, instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );        
+        DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
+
     }
     
     // Disconnects const instance methods. Class X should be equal to Y, or an ancestor type.
@@ -696,11 +804,13 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal2 %p removing connections to const instance method (object %p, method %p)\n", this, pObject, BruteForceCast<void*>(fpMethod) );
-        Disconnect( Delegate(pObject, fpMethod) );
+        SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
+        JL_SIGNAL_LOG( "Signal2 %p removing connections to Observer %p, const instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
+        DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
     }
     
-    // Disconnects all connected instance methods from a single observer    
+    // Disconnects all connected instance methods from a single observer. Calls NotifyObserverDisconnect()
+    // if any disconnections are made.
     void Disconnect( SignalObserver* pObserver )
     {
         if ( ! pObserver )
@@ -708,20 +818,26 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal2 %p removing connections to Observer %p\n", this, pObserver );
+        JL_SIGNAL_LOG( "Signal2 %p removing all connections to Observer %p\n", this, pObserver );
+        unsigned nDisconnections = 0;
+        
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
         {
             if ( (*i).pObserver == pObserver )
             {
                 JL_SIGNAL_LOG( "\tRemoving connection to observer\n" );
-                
-                m_oConnections.Remove( i );
-                NotifyObserverDisconnect( pObserver );
+                m_oConnections.Remove( i ); // advances iterator
+                ++nDisconnections;
             }
             else
             {
                 ++i;
             }
+        }
+        
+        if ( nDisconnections > 0 )
+        {
+            NotifyObserverDisconnect( pObserver );        
         }
     }
     
@@ -732,6 +848,10 @@ public:
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); ++i )
         {
             SignalObserver* pObserver = (*i).pObserver;
+            
+            //HACK - call this each time we encounter a valid observer pointer. This means
+            // this will be called repeatedly for observers that are connected multiple times
+            // to this signal.
             if ( pObserver )
             {
                 NotifyObserverDisconnect( pObserver );
@@ -755,19 +875,37 @@ private:
         return false;        
     }
     
-    void Disconnect( const Delegate& d )
+    // Disconnects a specific slot on an observer. Calls NotifyObserverDisconnect() if
+    // the observer is completely disconnected from this signal.
+    void DisconnectObserverDelegate( SignalObserver* pObserver, const Delegate& d )
     {
+        unsigned nDisconnections = 0; // number of disconnections. This is 0 or 1 unless you connected the same slot twice.
+        unsigned nObserverConnectionCount = 0; // number of times the observer is connected to this signal
+        
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
         {
             if ( (*i).d == d )
             {
-                JL_SIGNAL_LOG( "Removing connection...\n" );
-                m_oConnections.Remove( i );
+                JL_ASSERT( (*i).pObserver == pObserver );
+                JL_SIGNAL_LOG( "\tRemoving connection...\n" );
+                m_oConnections.Remove( i ); // advances iterator
+                ++nDisconnections;
             }
             else
             {
+                if ( (*i).pObserver == pObserver )
+                {
+                    ++nObserverConnectionCount;
+                }
+
                 ++i;
             }
+        }
+        
+        if ( nDisconnections > 0 && nObserverConnectionCount == 0 )
+        {
+            JL_SIGNAL_LOG( "\tCompletely disconnected observer %p!", pObserver );
+            NotifyObserverDisconnect( pObserver );
         }    
     }
     
@@ -928,8 +1066,22 @@ public:
     // Disconnects a non-instance method.
     void Disconnect( void (*fpFunction)(_P1, _P2, _P3) )
     {
-        JL_SIGNAL_LOG( "Signal3 %p removing connections to non-instance method %p\n", this, BruteForceCast<void*>(fpFunction) );
-        Disconnect( Delegate(fpFunction) );
+        JL_SIGNAL_LOG( "Signal3 %p removing connections to non-instance method %p\n", this, BruteForceCast<void*>(fpFunction) );        
+        const Delegate d(fpFunction);
+        
+        for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
+        {
+            if ( (*i).d == d )
+            {
+                JL_ASSERT( (*i).pObserver == NULL );
+                JL_SIGNAL_LOG( "\tRemoving connection...\n" );
+                m_oConnections.Remove( i );
+            }
+            else
+            {
+                ++i;
+            }
+        }         
     }    
 
     // Disconnects instance methods. Class X should be equal to Y, or an ancestor type.
@@ -941,8 +1093,10 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal3 %p removing connections to instance method (object %p, method %p)\n", this, pObject, BruteForceCast<void*>(fpMethod) );
-        Disconnect( Delegate(pObject, fpMethod) );
+        SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
+        JL_SIGNAL_LOG( "Signal3 %p removing connections to Observer %p, instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );        
+        DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
+
     }
     
     // Disconnects const instance methods. Class X should be equal to Y, or an ancestor type.
@@ -954,11 +1108,13 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal3 %p removing connections to const instance method (object %p, method %p)\n", this, pObject, BruteForceCast<void*>(fpMethod) );
-        Disconnect( Delegate(pObject, fpMethod) );
+        SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
+        JL_SIGNAL_LOG( "Signal3 %p removing connections to Observer %p, const instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
+        DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
     }
     
-    // Disconnects all connected instance methods from a single observer    
+    // Disconnects all connected instance methods from a single observer. Calls NotifyObserverDisconnect()
+    // if any disconnections are made.
     void Disconnect( SignalObserver* pObserver )
     {
         if ( ! pObserver )
@@ -966,20 +1122,26 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal3 %p removing connections to Observer %p\n", this, pObserver );
+        JL_SIGNAL_LOG( "Signal3 %p removing all connections to Observer %p\n", this, pObserver );
+        unsigned nDisconnections = 0;
+        
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
         {
             if ( (*i).pObserver == pObserver )
             {
                 JL_SIGNAL_LOG( "\tRemoving connection to observer\n" );
-                
-                m_oConnections.Remove( i );
-                NotifyObserverDisconnect( pObserver );
+                m_oConnections.Remove( i ); // advances iterator
+                ++nDisconnections;
             }
             else
             {
                 ++i;
             }
+        }
+        
+        if ( nDisconnections > 0 )
+        {
+            NotifyObserverDisconnect( pObserver );        
         }
     }
     
@@ -990,6 +1152,10 @@ public:
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); ++i )
         {
             SignalObserver* pObserver = (*i).pObserver;
+            
+            //HACK - call this each time we encounter a valid observer pointer. This means
+            // this will be called repeatedly for observers that are connected multiple times
+            // to this signal.
             if ( pObserver )
             {
                 NotifyObserverDisconnect( pObserver );
@@ -1013,19 +1179,37 @@ private:
         return false;        
     }
     
-    void Disconnect( const Delegate& d )
+    // Disconnects a specific slot on an observer. Calls NotifyObserverDisconnect() if
+    // the observer is completely disconnected from this signal.
+    void DisconnectObserverDelegate( SignalObserver* pObserver, const Delegate& d )
     {
+        unsigned nDisconnections = 0; // number of disconnections. This is 0 or 1 unless you connected the same slot twice.
+        unsigned nObserverConnectionCount = 0; // number of times the observer is connected to this signal
+        
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
         {
             if ( (*i).d == d )
             {
-                JL_SIGNAL_LOG( "Removing connection...\n" );
-                m_oConnections.Remove( i );
+                JL_ASSERT( (*i).pObserver == pObserver );
+                JL_SIGNAL_LOG( "\tRemoving connection...\n" );
+                m_oConnections.Remove( i ); // advances iterator
+                ++nDisconnections;
             }
             else
             {
+                if ( (*i).pObserver == pObserver )
+                {
+                    ++nObserverConnectionCount;
+                }
+
                 ++i;
             }
+        }
+        
+        if ( nDisconnections > 0 && nObserverConnectionCount == 0 )
+        {
+            JL_SIGNAL_LOG( "\tCompletely disconnected observer %p!", pObserver );
+            NotifyObserverDisconnect( pObserver );
         }    
     }
     
@@ -1186,8 +1370,22 @@ public:
     // Disconnects a non-instance method.
     void Disconnect( void (*fpFunction)(_P1, _P2, _P3, _P4) )
     {
-        JL_SIGNAL_LOG( "Signal4 %p removing connections to non-instance method %p\n", this, BruteForceCast<void*>(fpFunction) );
-        Disconnect( Delegate(fpFunction) );
+        JL_SIGNAL_LOG( "Signal4 %p removing connections to non-instance method %p\n", this, BruteForceCast<void*>(fpFunction) );        
+        const Delegate d(fpFunction);
+        
+        for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
+        {
+            if ( (*i).d == d )
+            {
+                JL_ASSERT( (*i).pObserver == NULL );
+                JL_SIGNAL_LOG( "\tRemoving connection...\n" );
+                m_oConnections.Remove( i );
+            }
+            else
+            {
+                ++i;
+            }
+        }         
     }    
 
     // Disconnects instance methods. Class X should be equal to Y, or an ancestor type.
@@ -1199,8 +1397,10 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal4 %p removing connections to instance method (object %p, method %p)\n", this, pObject, BruteForceCast<void*>(fpMethod) );
-        Disconnect( Delegate(pObject, fpMethod) );
+        SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
+        JL_SIGNAL_LOG( "Signal4 %p removing connections to Observer %p, instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );        
+        DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
+
     }
     
     // Disconnects const instance methods. Class X should be equal to Y, or an ancestor type.
@@ -1212,11 +1412,13 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal4 %p removing connections to const instance method (object %p, method %p)\n", this, pObject, BruteForceCast<void*>(fpMethod) );
-        Disconnect( Delegate(pObject, fpMethod) );
+        SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
+        JL_SIGNAL_LOG( "Signal4 %p removing connections to Observer %p, const instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
+        DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
     }
     
-    // Disconnects all connected instance methods from a single observer    
+    // Disconnects all connected instance methods from a single observer. Calls NotifyObserverDisconnect()
+    // if any disconnections are made.
     void Disconnect( SignalObserver* pObserver )
     {
         if ( ! pObserver )
@@ -1224,20 +1426,26 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal4 %p removing connections to Observer %p\n", this, pObserver );
+        JL_SIGNAL_LOG( "Signal4 %p removing all connections to Observer %p\n", this, pObserver );
+        unsigned nDisconnections = 0;
+        
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
         {
             if ( (*i).pObserver == pObserver )
             {
                 JL_SIGNAL_LOG( "\tRemoving connection to observer\n" );
-                
-                m_oConnections.Remove( i );
-                NotifyObserverDisconnect( pObserver );
+                m_oConnections.Remove( i ); // advances iterator
+                ++nDisconnections;
             }
             else
             {
                 ++i;
             }
+        }
+        
+        if ( nDisconnections > 0 )
+        {
+            NotifyObserverDisconnect( pObserver );        
         }
     }
     
@@ -1248,6 +1456,10 @@ public:
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); ++i )
         {
             SignalObserver* pObserver = (*i).pObserver;
+            
+            //HACK - call this each time we encounter a valid observer pointer. This means
+            // this will be called repeatedly for observers that are connected multiple times
+            // to this signal.
             if ( pObserver )
             {
                 NotifyObserverDisconnect( pObserver );
@@ -1271,19 +1483,37 @@ private:
         return false;        
     }
     
-    void Disconnect( const Delegate& d )
+    // Disconnects a specific slot on an observer. Calls NotifyObserverDisconnect() if
+    // the observer is completely disconnected from this signal.
+    void DisconnectObserverDelegate( SignalObserver* pObserver, const Delegate& d )
     {
+        unsigned nDisconnections = 0; // number of disconnections. This is 0 or 1 unless you connected the same slot twice.
+        unsigned nObserverConnectionCount = 0; // number of times the observer is connected to this signal
+        
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
         {
             if ( (*i).d == d )
             {
-                JL_SIGNAL_LOG( "Removing connection...\n" );
-                m_oConnections.Remove( i );
+                JL_ASSERT( (*i).pObserver == pObserver );
+                JL_SIGNAL_LOG( "\tRemoving connection...\n" );
+                m_oConnections.Remove( i ); // advances iterator
+                ++nDisconnections;
             }
             else
             {
+                if ( (*i).pObserver == pObserver )
+                {
+                    ++nObserverConnectionCount;
+                }
+
                 ++i;
             }
+        }
+        
+        if ( nDisconnections > 0 && nObserverConnectionCount == 0 )
+        {
+            JL_SIGNAL_LOG( "\tCompletely disconnected observer %p!", pObserver );
+            NotifyObserverDisconnect( pObserver );
         }    
     }
     
@@ -1444,8 +1674,22 @@ public:
     // Disconnects a non-instance method.
     void Disconnect( void (*fpFunction)(_P1, _P2, _P3, _P4, _P5) )
     {
-        JL_SIGNAL_LOG( "Signal5 %p removing connections to non-instance method %p\n", this, BruteForceCast<void*>(fpFunction) );
-        Disconnect( Delegate(fpFunction) );
+        JL_SIGNAL_LOG( "Signal5 %p removing connections to non-instance method %p\n", this, BruteForceCast<void*>(fpFunction) );        
+        const Delegate d(fpFunction);
+        
+        for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
+        {
+            if ( (*i).d == d )
+            {
+                JL_ASSERT( (*i).pObserver == NULL );
+                JL_SIGNAL_LOG( "\tRemoving connection...\n" );
+                m_oConnections.Remove( i );
+            }
+            else
+            {
+                ++i;
+            }
+        }         
     }    
 
     // Disconnects instance methods. Class X should be equal to Y, or an ancestor type.
@@ -1457,8 +1701,10 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal5 %p removing connections to instance method (object %p, method %p)\n", this, pObject, BruteForceCast<void*>(fpMethod) );
-        Disconnect( Delegate(pObject, fpMethod) );
+        SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
+        JL_SIGNAL_LOG( "Signal5 %p removing connections to Observer %p, instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );        
+        DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
+
     }
     
     // Disconnects const instance methods. Class X should be equal to Y, or an ancestor type.
@@ -1470,11 +1716,13 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal5 %p removing connections to const instance method (object %p, method %p)\n", this, pObject, BruteForceCast<void*>(fpMethod) );
-        Disconnect( Delegate(pObject, fpMethod) );
+        SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
+        JL_SIGNAL_LOG( "Signal5 %p removing connections to Observer %p, const instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
+        DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
     }
     
-    // Disconnects all connected instance methods from a single observer    
+    // Disconnects all connected instance methods from a single observer. Calls NotifyObserverDisconnect()
+    // if any disconnections are made.
     void Disconnect( SignalObserver* pObserver )
     {
         if ( ! pObserver )
@@ -1482,20 +1730,26 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal5 %p removing connections to Observer %p\n", this, pObserver );
+        JL_SIGNAL_LOG( "Signal5 %p removing all connections to Observer %p\n", this, pObserver );
+        unsigned nDisconnections = 0;
+        
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
         {
             if ( (*i).pObserver == pObserver )
             {
                 JL_SIGNAL_LOG( "\tRemoving connection to observer\n" );
-                
-                m_oConnections.Remove( i );
-                NotifyObserverDisconnect( pObserver );
+                m_oConnections.Remove( i ); // advances iterator
+                ++nDisconnections;
             }
             else
             {
                 ++i;
             }
+        }
+        
+        if ( nDisconnections > 0 )
+        {
+            NotifyObserverDisconnect( pObserver );        
         }
     }
     
@@ -1506,6 +1760,10 @@ public:
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); ++i )
         {
             SignalObserver* pObserver = (*i).pObserver;
+            
+            //HACK - call this each time we encounter a valid observer pointer. This means
+            // this will be called repeatedly for observers that are connected multiple times
+            // to this signal.
             if ( pObserver )
             {
                 NotifyObserverDisconnect( pObserver );
@@ -1529,19 +1787,37 @@ private:
         return false;        
     }
     
-    void Disconnect( const Delegate& d )
+    // Disconnects a specific slot on an observer. Calls NotifyObserverDisconnect() if
+    // the observer is completely disconnected from this signal.
+    void DisconnectObserverDelegate( SignalObserver* pObserver, const Delegate& d )
     {
+        unsigned nDisconnections = 0; // number of disconnections. This is 0 or 1 unless you connected the same slot twice.
+        unsigned nObserverConnectionCount = 0; // number of times the observer is connected to this signal
+        
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
         {
             if ( (*i).d == d )
             {
-                JL_SIGNAL_LOG( "Removing connection...\n" );
-                m_oConnections.Remove( i );
+                JL_ASSERT( (*i).pObserver == pObserver );
+                JL_SIGNAL_LOG( "\tRemoving connection...\n" );
+                m_oConnections.Remove( i ); // advances iterator
+                ++nDisconnections;
             }
             else
             {
+                if ( (*i).pObserver == pObserver )
+                {
+                    ++nObserverConnectionCount;
+                }
+
                 ++i;
             }
+        }
+        
+        if ( nDisconnections > 0 && nObserverConnectionCount == 0 )
+        {
+            JL_SIGNAL_LOG( "\tCompletely disconnected observer %p!", pObserver );
+            NotifyObserverDisconnect( pObserver );
         }    
     }
     
@@ -1702,8 +1978,22 @@ public:
     // Disconnects a non-instance method.
     void Disconnect( void (*fpFunction)(_P1, _P2, _P3, _P4, _P5, _P6) )
     {
-        JL_SIGNAL_LOG( "Signal6 %p removing connections to non-instance method %p\n", this, BruteForceCast<void*>(fpFunction) );
-        Disconnect( Delegate(fpFunction) );
+        JL_SIGNAL_LOG( "Signal6 %p removing connections to non-instance method %p\n", this, BruteForceCast<void*>(fpFunction) );        
+        const Delegate d(fpFunction);
+        
+        for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
+        {
+            if ( (*i).d == d )
+            {
+                JL_ASSERT( (*i).pObserver == NULL );
+                JL_SIGNAL_LOG( "\tRemoving connection...\n" );
+                m_oConnections.Remove( i );
+            }
+            else
+            {
+                ++i;
+            }
+        }         
     }    
 
     // Disconnects instance methods. Class X should be equal to Y, or an ancestor type.
@@ -1715,8 +2005,10 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal6 %p removing connections to instance method (object %p, method %p)\n", this, pObject, BruteForceCast<void*>(fpMethod) );
-        Disconnect( Delegate(pObject, fpMethod) );
+        SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
+        JL_SIGNAL_LOG( "Signal6 %p removing connections to Observer %p, instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );        
+        DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
+
     }
     
     // Disconnects const instance methods. Class X should be equal to Y, or an ancestor type.
@@ -1728,11 +2020,13 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal6 %p removing connections to const instance method (object %p, method %p)\n", this, pObject, BruteForceCast<void*>(fpMethod) );
-        Disconnect( Delegate(pObject, fpMethod) );
+        SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
+        JL_SIGNAL_LOG( "Signal6 %p removing connections to Observer %p, const instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
+        DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
     }
     
-    // Disconnects all connected instance methods from a single observer    
+    // Disconnects all connected instance methods from a single observer. Calls NotifyObserverDisconnect()
+    // if any disconnections are made.
     void Disconnect( SignalObserver* pObserver )
     {
         if ( ! pObserver )
@@ -1740,20 +2034,26 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal6 %p removing connections to Observer %p\n", this, pObserver );
+        JL_SIGNAL_LOG( "Signal6 %p removing all connections to Observer %p\n", this, pObserver );
+        unsigned nDisconnections = 0;
+        
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
         {
             if ( (*i).pObserver == pObserver )
             {
                 JL_SIGNAL_LOG( "\tRemoving connection to observer\n" );
-                
-                m_oConnections.Remove( i );
-                NotifyObserverDisconnect( pObserver );
+                m_oConnections.Remove( i ); // advances iterator
+                ++nDisconnections;
             }
             else
             {
                 ++i;
             }
+        }
+        
+        if ( nDisconnections > 0 )
+        {
+            NotifyObserverDisconnect( pObserver );        
         }
     }
     
@@ -1764,6 +2064,10 @@ public:
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); ++i )
         {
             SignalObserver* pObserver = (*i).pObserver;
+            
+            //HACK - call this each time we encounter a valid observer pointer. This means
+            // this will be called repeatedly for observers that are connected multiple times
+            // to this signal.
             if ( pObserver )
             {
                 NotifyObserverDisconnect( pObserver );
@@ -1787,19 +2091,37 @@ private:
         return false;        
     }
     
-    void Disconnect( const Delegate& d )
+    // Disconnects a specific slot on an observer. Calls NotifyObserverDisconnect() if
+    // the observer is completely disconnected from this signal.
+    void DisconnectObserverDelegate( SignalObserver* pObserver, const Delegate& d )
     {
+        unsigned nDisconnections = 0; // number of disconnections. This is 0 or 1 unless you connected the same slot twice.
+        unsigned nObserverConnectionCount = 0; // number of times the observer is connected to this signal
+        
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
         {
             if ( (*i).d == d )
             {
-                JL_SIGNAL_LOG( "Removing connection...\n" );
-                m_oConnections.Remove( i );
+                JL_ASSERT( (*i).pObserver == pObserver );
+                JL_SIGNAL_LOG( "\tRemoving connection...\n" );
+                m_oConnections.Remove( i ); // advances iterator
+                ++nDisconnections;
             }
             else
             {
+                if ( (*i).pObserver == pObserver )
+                {
+                    ++nObserverConnectionCount;
+                }
+
                 ++i;
             }
+        }
+        
+        if ( nDisconnections > 0 && nObserverConnectionCount == 0 )
+        {
+            JL_SIGNAL_LOG( "\tCompletely disconnected observer %p!", pObserver );
+            NotifyObserverDisconnect( pObserver );
         }    
     }
     
@@ -1960,8 +2282,22 @@ public:
     // Disconnects a non-instance method.
     void Disconnect( void (*fpFunction)(_P1, _P2, _P3, _P4, _P5, _P6, _P7) )
     {
-        JL_SIGNAL_LOG( "Signal7 %p removing connections to non-instance method %p\n", this, BruteForceCast<void*>(fpFunction) );
-        Disconnect( Delegate(fpFunction) );
+        JL_SIGNAL_LOG( "Signal7 %p removing connections to non-instance method %p\n", this, BruteForceCast<void*>(fpFunction) );        
+        const Delegate d(fpFunction);
+        
+        for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
+        {
+            if ( (*i).d == d )
+            {
+                JL_ASSERT( (*i).pObserver == NULL );
+                JL_SIGNAL_LOG( "\tRemoving connection...\n" );
+                m_oConnections.Remove( i );
+            }
+            else
+            {
+                ++i;
+            }
+        }         
     }    
 
     // Disconnects instance methods. Class X should be equal to Y, or an ancestor type.
@@ -1973,8 +2309,10 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal7 %p removing connections to instance method (object %p, method %p)\n", this, pObject, BruteForceCast<void*>(fpMethod) );
-        Disconnect( Delegate(pObject, fpMethod) );
+        SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
+        JL_SIGNAL_LOG( "Signal7 %p removing connections to Observer %p, instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );        
+        DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
+
     }
     
     // Disconnects const instance methods. Class X should be equal to Y, or an ancestor type.
@@ -1986,11 +2324,13 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal7 %p removing connections to const instance method (object %p, method %p)\n", this, pObject, BruteForceCast<void*>(fpMethod) );
-        Disconnect( Delegate(pObject, fpMethod) );
+        SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
+        JL_SIGNAL_LOG( "Signal7 %p removing connections to Observer %p, const instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
+        DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
     }
     
-    // Disconnects all connected instance methods from a single observer    
+    // Disconnects all connected instance methods from a single observer. Calls NotifyObserverDisconnect()
+    // if any disconnections are made.
     void Disconnect( SignalObserver* pObserver )
     {
         if ( ! pObserver )
@@ -1998,20 +2338,26 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal7 %p removing connections to Observer %p\n", this, pObserver );
+        JL_SIGNAL_LOG( "Signal7 %p removing all connections to Observer %p\n", this, pObserver );
+        unsigned nDisconnections = 0;
+        
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
         {
             if ( (*i).pObserver == pObserver )
             {
                 JL_SIGNAL_LOG( "\tRemoving connection to observer\n" );
-                
-                m_oConnections.Remove( i );
-                NotifyObserverDisconnect( pObserver );
+                m_oConnections.Remove( i ); // advances iterator
+                ++nDisconnections;
             }
             else
             {
                 ++i;
             }
+        }
+        
+        if ( nDisconnections > 0 )
+        {
+            NotifyObserverDisconnect( pObserver );        
         }
     }
     
@@ -2022,6 +2368,10 @@ public:
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); ++i )
         {
             SignalObserver* pObserver = (*i).pObserver;
+            
+            //HACK - call this each time we encounter a valid observer pointer. This means
+            // this will be called repeatedly for observers that are connected multiple times
+            // to this signal.
             if ( pObserver )
             {
                 NotifyObserverDisconnect( pObserver );
@@ -2045,19 +2395,37 @@ private:
         return false;        
     }
     
-    void Disconnect( const Delegate& d )
+    // Disconnects a specific slot on an observer. Calls NotifyObserverDisconnect() if
+    // the observer is completely disconnected from this signal.
+    void DisconnectObserverDelegate( SignalObserver* pObserver, const Delegate& d )
     {
+        unsigned nDisconnections = 0; // number of disconnections. This is 0 or 1 unless you connected the same slot twice.
+        unsigned nObserverConnectionCount = 0; // number of times the observer is connected to this signal
+        
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
         {
             if ( (*i).d == d )
             {
-                JL_SIGNAL_LOG( "Removing connection...\n" );
-                m_oConnections.Remove( i );
+                JL_ASSERT( (*i).pObserver == pObserver );
+                JL_SIGNAL_LOG( "\tRemoving connection...\n" );
+                m_oConnections.Remove( i ); // advances iterator
+                ++nDisconnections;
             }
             else
             {
+                if ( (*i).pObserver == pObserver )
+                {
+                    ++nObserverConnectionCount;
+                }
+
                 ++i;
             }
+        }
+        
+        if ( nDisconnections > 0 && nObserverConnectionCount == 0 )
+        {
+            JL_SIGNAL_LOG( "\tCompletely disconnected observer %p!", pObserver );
+            NotifyObserverDisconnect( pObserver );
         }    
     }
     
@@ -2218,8 +2586,22 @@ public:
     // Disconnects a non-instance method.
     void Disconnect( void (*fpFunction)(_P1, _P2, _P3, _P4, _P5, _P6, _P7, _P8) )
     {
-        JL_SIGNAL_LOG( "Signal8 %p removing connections to non-instance method %p\n", this, BruteForceCast<void*>(fpFunction) );
-        Disconnect( Delegate(fpFunction) );
+        JL_SIGNAL_LOG( "Signal8 %p removing connections to non-instance method %p\n", this, BruteForceCast<void*>(fpFunction) );        
+        const Delegate d(fpFunction);
+        
+        for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
+        {
+            if ( (*i).d == d )
+            {
+                JL_ASSERT( (*i).pObserver == NULL );
+                JL_SIGNAL_LOG( "\tRemoving connection...\n" );
+                m_oConnections.Remove( i );
+            }
+            else
+            {
+                ++i;
+            }
+        }         
     }    
 
     // Disconnects instance methods. Class X should be equal to Y, or an ancestor type.
@@ -2231,8 +2613,10 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal8 %p removing connections to instance method (object %p, method %p)\n", this, pObject, BruteForceCast<void*>(fpMethod) );
-        Disconnect( Delegate(pObject, fpMethod) );
+        SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
+        JL_SIGNAL_LOG( "Signal8 %p removing connections to Observer %p, instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );        
+        DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
+
     }
     
     // Disconnects const instance methods. Class X should be equal to Y, or an ancestor type.
@@ -2244,11 +2628,13 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal8 %p removing connections to const instance method (object %p, method %p)\n", this, pObject, BruteForceCast<void*>(fpMethod) );
-        Disconnect( Delegate(pObject, fpMethod) );
+        SignalObserver* pObserver = static_cast<SignalObserver*>( pObject );
+        JL_SIGNAL_LOG( "Signal8 %p removing connections to Observer %p, const instance method (object %p, method %p)\n", this, pObserver, pObject, BruteForceCast<void*>(fpMethod) );
+        DisconnectObserverDelegate( pObserver, Delegate(pObject, fpMethod) );
     }
     
-    // Disconnects all connected instance methods from a single observer    
+    // Disconnects all connected instance methods from a single observer. Calls NotifyObserverDisconnect()
+    // if any disconnections are made.
     void Disconnect( SignalObserver* pObserver )
     {
         if ( ! pObserver )
@@ -2256,20 +2642,26 @@ public:
             return;
         }
         
-        JL_SIGNAL_LOG( "Signal8 %p removing connections to Observer %p\n", this, pObserver );
+        JL_SIGNAL_LOG( "Signal8 %p removing all connections to Observer %p\n", this, pObserver );
+        unsigned nDisconnections = 0;
+        
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
         {
             if ( (*i).pObserver == pObserver )
             {
                 JL_SIGNAL_LOG( "\tRemoving connection to observer\n" );
-                
-                m_oConnections.Remove( i );
-                NotifyObserverDisconnect( pObserver );
+                m_oConnections.Remove( i ); // advances iterator
+                ++nDisconnections;
             }
             else
             {
                 ++i;
             }
+        }
+        
+        if ( nDisconnections > 0 )
+        {
+            NotifyObserverDisconnect( pObserver );        
         }
     }
     
@@ -2280,6 +2672,10 @@ public:
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); ++i )
         {
             SignalObserver* pObserver = (*i).pObserver;
+            
+            //HACK - call this each time we encounter a valid observer pointer. This means
+            // this will be called repeatedly for observers that are connected multiple times
+            // to this signal.
             if ( pObserver )
             {
                 NotifyObserverDisconnect( pObserver );
@@ -2303,19 +2699,37 @@ private:
         return false;        
     }
     
-    void Disconnect( const Delegate& d )
+    // Disconnects a specific slot on an observer. Calls NotifyObserverDisconnect() if
+    // the observer is completely disconnected from this signal.
+    void DisconnectObserverDelegate( SignalObserver* pObserver, const Delegate& d )
     {
+        unsigned nDisconnections = 0; // number of disconnections. This is 0 or 1 unless you connected the same slot twice.
+        unsigned nObserverConnectionCount = 0; // number of times the observer is connected to this signal
+        
         for ( ConnectionIter i = m_oConnections.begin(); i.isValid(); )
         {
             if ( (*i).d == d )
             {
-                JL_SIGNAL_LOG( "Removing connection...\n" );
-                m_oConnections.Remove( i );
+                JL_ASSERT( (*i).pObserver == pObserver );
+                JL_SIGNAL_LOG( "\tRemoving connection...\n" );
+                m_oConnections.Remove( i ); // advances iterator
+                ++nDisconnections;
             }
             else
             {
+                if ( (*i).pObserver == pObserver )
+                {
+                    ++nObserverConnectionCount;
+                }
+
                 ++i;
             }
+        }
+        
+        if ( nDisconnections > 0 && nObserverConnectionCount == 0 )
+        {
+            JL_SIGNAL_LOG( "\tCompletely disconnected observer %p!", pObserver );
+            NotifyObserverDisconnect( pObserver );
         }    
     }
     
