@@ -291,10 +291,10 @@ public:
 Foo oFoo;
 oSignal.Connect( &oFoo, &Foo::Bar );
 
-// Disconnect instance metho
+// Disconnect instance method
 oSignal.Disconnect( &oFoo, &Foo::Bar );
 
-// Disconnect observer
+// Disconnect all instance methods for an observer
 oSignal.Disconnect( &oFoo );
 
 // Disconnect all connected functions and observers
