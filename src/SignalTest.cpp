@@ -241,9 +241,9 @@ void SignalTest()
     for ( int i = 0; i < JL_ARRAY_SIZE(pObservers); ++i )
     {      
         Sig0.Connect( & pObservers[i], & TestObserver::M0 );
-        Sig1.Connect( & pObservers[i], & TestObserver::M1 );
-        
         assert( Sig0.IsConnected(& pObservers[i], & TestObserver::M0) );
+        
+        Sig1.Connect( & pObservers[i], & TestObserver::M1 );
         assert( Sig1.IsConnected(& pObservers[i], & TestObserver::M1) );
         
         const int nIndex = i + 1;
@@ -322,9 +322,9 @@ void SignalTest()
     for ( int i = 0; i < JL_ARRAY_SIZE(pObservers); ++i )
     {
         Sig0.Connect( & pObservers[i], & TestObserver::CM0 );
-        Sig1.Connect( & pObservers[i], & TestObserver::CM1 );
-        
         assert( Sig0.IsConnected(& pObservers[i], & TestObserver::CM0) );
+        
+        Sig1.Connect( & pObservers[i], & TestObserver::CM1 );
         assert( Sig1.IsConnected(& pObservers[i], & TestObserver::CM1) );
         
         const int nIndex = (JL_ARRAY_SIZE(pObservers) + 1 - i);
@@ -455,49 +455,56 @@ void SignalTest()
     // Test disconnections
     printf( "Disconnecting non-const instance methods to signals...\n" );
     
-    // NOTE: Signal::Disconnect() will fully disconnect an observer from a signal.
-    // If an observer is connected to a signal more than once, each connection will
-    // we broken.
     for ( int i = 0; i < JL_ARRAY_SIZE(pObservers); ++i )
     {
-        Sig0.Disconnect( & pObservers[i] );
-        Sig1.Disconnect( & pObservers[i] );
+        Sig0.Disconnect( & pObservers[i], & TestObserver::M0 );
+        assert( ! Sig0.IsConnected(& pObservers[i], & TestObserver::M0) );
+        
+        Sig1.Disconnect( & pObservers[i], & TestObserver::M1 );
+        assert( ! Sig1.IsConnected(& pObservers[i], & TestObserver::M1) );
         
         const int nIndex = i + 1;
         
         if ( nIndex % 2 == 0 )
         {
-            Sig2.Disconnect( & pObservers[i] );
+            Sig2.Disconnect( & pObservers[i], & TestObserver::M2 );
+            assert( ! Sig2.IsConnected(& pObservers[i], & TestObserver::M2) );            
         }
         
         if ( nIndex % 3 == 0 )
         {
-            Sig3.Disconnect( & pObservers[i] );
+            Sig3.Disconnect( & pObservers[i], & TestObserver::M3  );
+            assert( ! Sig3.IsConnected(& pObservers[i], & TestObserver::M3) );            
         }
         
         if ( nIndex % 4 == 0 )
         {
-            Sig4.Disconnect( & pObservers[i] );
+            Sig4.Disconnect( & pObservers[i], & TestObserver::M4  );
+            assert( ! Sig4.IsConnected(& pObservers[i], & TestObserver::M4) );                        
         }
         
         if ( nIndex % 5 == 0 )
         {
-            Sig5.Disconnect( & pObservers[i] );
+            Sig5.Disconnect( & pObservers[i], & TestObserver::M5  );
+            assert( ! Sig5.IsConnected(& pObservers[i], & TestObserver::M5) );                        
         }
         
         if ( nIndex % 6 == 0 )
         {
-            Sig6.Disconnect( & pObservers[i] );
+            Sig6.Disconnect( & pObservers[i], & TestObserver::M6  );
+            assert( ! Sig6.IsConnected(& pObservers[i], & TestObserver::M6) );                        
         }
         
         if ( nIndex % 7 == 0 )
         {
-            Sig7.Disconnect( & pObservers[i] );
+            Sig7.Disconnect( & pObservers[i], & TestObserver::M7  );
+            assert( ! Sig7.IsConnected(& pObservers[i], & TestObserver::M7) );                        
         }
         
         if ( nIndex % 8 == 0 )
         {
-            Sig8.Disconnect( & pObservers[i] );
+            Sig8.Disconnect( & pObservers[i], & TestObserver::M8  );
+            assert( ! Sig8.IsConnected(& pObservers[i], & TestObserver::M8) );                        
         }
     }
     
@@ -530,44 +537,53 @@ void SignalTest()
     
     for ( int i = 0; i < JL_ARRAY_SIZE(pObservers); ++i )
     {
-        Sig0.Disconnect( & pObservers[i] );
-        Sig1.Disconnect( & pObservers[i] );
+        Sig0.Disconnect( & pObservers[i], & TestObserver::CM0 );
+        assert( ! Sig0.IsConnected(& pObservers[i], & TestObserver::CM0) );
+        Sig1.Disconnect( & pObservers[i], & TestObserver::CM1 );
+        assert( ! Sig1.IsConnected(& pObservers[i], & TestObserver::CM1) );
         
         const int nIndex = (JL_ARRAY_SIZE(pObservers) + 1 - i);
         
         if ( nIndex % 2 == 0 )
         {
-            Sig2.Disconnect( & pObservers[i] );
+            Sig2.Disconnect( & pObservers[i], & TestObserver::CM2 );
+            assert( ! Sig2.IsConnected(& pObservers[i], & TestObserver::CM2) );            
         }
         
         if ( nIndex % 3 == 0 )
         {
-            Sig3.Disconnect( & pObservers[i] );
+            Sig3.Disconnect( & pObservers[i], & TestObserver::CM3  );
+            assert( ! Sig3.IsConnected(& pObservers[i], & TestObserver::CM3) );            
         }
         
         if ( nIndex % 4 == 0 )
         {
-            Sig4.Disconnect( & pObservers[i] );
+            Sig4.Disconnect( & pObservers[i], & TestObserver::CM4  );
+            assert( ! Sig4.IsConnected(& pObservers[i], & TestObserver::CM4) );                        
         }
         
         if ( nIndex % 5 == 0 )
         {
-            Sig5.Disconnect( & pObservers[i] );
+            Sig5.Disconnect( & pObservers[i], & TestObserver::CM5  );
+            assert( ! Sig5.IsConnected(& pObservers[i], & TestObserver::CM5) );                        
         }
         
         if ( nIndex % 6 == 0 )
         {
-            Sig6.Disconnect( & pObservers[i] );
+            Sig6.Disconnect( & pObservers[i], & TestObserver::CM6  );
+            assert( ! Sig6.IsConnected(& pObservers[i], & TestObserver::CM6) );                        
         }
         
         if ( nIndex % 7 == 0 )
         {
-            Sig7.Disconnect( & pObservers[i] );
+            Sig7.Disconnect( & pObservers[i], & TestObserver::CM7  );
+            assert( ! Sig7.IsConnected(& pObservers[i], & TestObserver::CM7) );                        
         }
         
         if ( nIndex % 8 == 0 )
         {
-            Sig8.Disconnect( & pObservers[i] );
+            Sig8.Disconnect( & pObservers[i], & TestObserver::CM8  );
+            assert( ! Sig8.IsConnected(& pObservers[i], & TestObserver::CM8) );                        
         }
     }
     
