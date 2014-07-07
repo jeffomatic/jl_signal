@@ -311,7 +311,7 @@ While the default allocators set globally should be enough for most applications
 class MallocAllocator : public jl::ScopedAllocator
 {
 public:
-    virtual void* Alloc( size_t nBytes ) { malloc( nBytes ); }
+    virtual void* Alloc( size_t nBytes ) { return malloc( nBytes ); }
     virtual void Free( void* pObject ) { free( pObject ); }
 };
 
