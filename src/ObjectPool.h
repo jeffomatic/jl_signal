@@ -16,16 +16,6 @@ namespace jl {
  * Due to data alignment issues, this does not derive from the ScopedAllocator
  * interface. If you need an object pool to act as a ScopedAllocator, please
  * see ObjectPoolScopedAllocator.h.
- *
- * Example:
- *    // Create a pool of 100 physics components
- *    StaticObjectPool<PhysicsComponent, 100> oPhysicsComponentPool;
- *
- *    // Allocate a physics component from the pool
- *    PhysicsComponent* pPhysics = new( oPhysicsComponentPool.Alloc() ) PhysicsComponent( pOwner );
- *    ...
- *    // When we don't need the component anymore, we can free it and return its memory back to the pool
- *    oPhysicsComponentPool.Destroy( pPhysics ); // this will call PhysicsComponent()!
  * 
  * PRO:
  *    O(1) allocate and free
