@@ -11,7 +11,7 @@ The library has a minimal initialization step, but after that, it's little more 
 
 #### No heap allocation
 
-By default, he internal allocation system bypasses the heap completely, so you don't need to worry about slow allocations or memory fragmentaton.
+By default, the internal allocation system bypasses the heap completely, so you don't need to worry about slow allocations or memory fragmentaton.
 
 #### Automatic signal disconnection
 
