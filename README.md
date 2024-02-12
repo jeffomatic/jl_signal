@@ -3,7 +3,7 @@ jl_signal
 
 For all your [Observer pattern](http://en.wikipedia.org/wiki/Observer_pattern) needs, a reasonably fast and tidy C++ implementation of signals & slots.
 
-- For a discussion on my design decisions, [please see this article](http://hoyvinglavin.com/2012/08/06/jl_signal/).
+- For a discussion on my design decisions, [please see this article](https://jeffomatic.github.io/2012/08/06/jl_signal/).
 - For an idea of how this library performs to its peers (hint: it does pretty well!), see [this benchmark](https://code.google.com/p/nano-signal-slot/wiki/Performance) or [this benchmark](http://tieba.baidu.com/p/3148762621?see_lz=1).
 
 [There](http://doc.trolltech.com/signalsandslots.html) [are](http://www.boost.org/libs/signals/) [lots](http://sigslot.sourceforge.net/) [and](http://libsigc.sourceforge.net/) [lots](https://github.com/pbhogan/Signals) of C++ signals & slots systems out there. This one gives you the following:
